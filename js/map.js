@@ -67,11 +67,19 @@ var MAP = {
     max: 500
   }
 };
+
+var lodgeTypes = {
+  flat: 'Квартира',
+  bungalo: 'Бунгало',
+  house: 'Дом',
+  default: 'Не указан'
+};
 var tokyoPinMap = 'tokyo__pin-map';
 var lodgeTemplate = document.querySelector('#lodge-template');
 var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
 var dialog = document.querySelector('.dialog');
 var dialogPanel = dialog.querySelector('.dialog__panel');
+
 /**
  * Returns random integer between min and max inclusive
  * @param {number} min
@@ -95,7 +103,7 @@ var getRandomArrayItem = function (array) {
  * @return {*}
  */
 var getUniqueArrayItem = function (array) {
-  return array.splice(getRandomInteger(0, array.length - 1), 1);
+  return array.splice(getRandomInteger(0, array.length - 1), 1)[0];
 };
 /**
  * Returns array of random length with unique elements from initial array
@@ -108,13 +116,14 @@ var getArrayOfRandomLength = function (array) {
   var newArrayLength = getRandomInteger(1, array.length);
 
   for (var i = 0; i < newArrayLength; i++) {
-    newArray.push(getUniqueArrayItem(arrayCopy)[0]);
+    newArray.push(getUniqueArrayItem(arrayCopy));
   }
   return newArray;
 };
+
 /**
  * Creates an object with data for particular lodge offer
- * @return {{author: {avatar: string}, offer: {title: *, address: string, price: number, type: *, rooms: number, guests: number, checkin: *, checkout: *, features: Array, description: string, photos: Array}, location: {x: number, y: number}}}
+ * @return {{Object}}}
  */
 var createLodgeOffer = function () {
   var locationX = getRandomInteger(MAP.width.min, MAP.width.max);
@@ -186,7 +195,7 @@ var createPin = function (advert) {
  * @param {Array} offers
  * @param {string} elementClass
  */
-var renderPin = function (offers, elementClass) {
+var renderPins = function (offers, elementClass) {
   var pinsMap = document.querySelector('.' + elementClass);
   var fragment = document.createDocumentFragment();
 
@@ -195,31 +204,7 @@ var renderPin = function (offers, elementClass) {
   });
   pinsMap.appendChild(fragment);
 };
-/**
- * Returns lodge type in russian
- * @param {string} type
- * @return {string}
- */
-var getLodgeType = function (type) {
-  var typeInRussian = '';
-  switch (type) {
-    case 'flat':
-      typeInRussian = 'Квартира';
-      break;
 
-    case 'bungalo':
-      typeInRussian = 'Бунгало';
-      break;
-
-    case 'house':
-      typeInRussian = 'Дом';
-      break;
-
-    default:
-      typeInRussian = 'Не указан';
-  }
-  return typeInRussian;
-};
 /**
  * Fulfill node template with advert data
  * @param {Object} template
@@ -231,7 +216,7 @@ var createLodgeCard = function (template, advert) {
   LodgeCard.querySelector('.lodge__title').textContent = advert.offer.title;
   LodgeCard.querySelector('.lodge__title').textContent = advert.offer.address;
   LodgeCard.querySelector('.lodge__price').textContent = advert.offer.price + ' ' + '\u20BD/ночь';
-  LodgeCard.querySelector('.lodge__type').textContent = getLodgeType(advert.offer.type);
+  LodgeCard.querySelector('.lodge__type').textContent = lodgeTypes[advert.offer.type] || lodgeTypes.default;
   LodgeCard.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + advert.offer.guests +
     ' гостей в ' + advert.offer.rooms + ' комнатах';
   LodgeCard.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + advert.offer.checkin +
@@ -263,9 +248,10 @@ var renderLodgeCard = function (filledTemplate) {
 var renderDialogAvatar = function (advert) {
   dialog.querySelector('.dialog__title img').src = advert.author.avatar;
 };
+
 // create offers' list and render all pins on the map
 var offersList = createOffersList();
-renderPin(offersList, tokyoPinMap);
+renderPins(offersList, tokyoPinMap);
 // create and render lodge card
 var filledDialogPanelTemplate = createLodgeCard(lodgeTemplateContent, offersList[0]);
 renderLodgeCard(filledDialogPanelTemplate);
