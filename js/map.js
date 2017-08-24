@@ -181,6 +181,7 @@ var createPin = function (advert) {
   pin.className = PIN_CLASS_NAME;
   pin.style.left = advert.location.x - pin.offsetWidth / 2 + 'px';
   pin.style.top = advert.location.y - pin.offsetHeight + 'px';
+  pin.setAttribute('tabindex', '0');
 
   img.className = IMG_CLASS_NAME;
   img.src = advert.author.avatar;
@@ -212,34 +213,35 @@ var renderPins = function (offers, elementClass) {
  * @return {Node}
  */
 var createLodgeCard = function (template, advert) {
-  var LodgeCard = template.querySelector('.dialog__panel').cloneNode(true);
-  LodgeCard.querySelector('.lodge__title').textContent = advert.offer.title;
-  LodgeCard.querySelector('.lodge__title').textContent = advert.offer.address;
-  LodgeCard.querySelector('.lodge__price').textContent = advert.offer.price + ' ' + '\u20BD/ночь';
-  LodgeCard.querySelector('.lodge__type').textContent = lodgeTypes[advert.offer.type] || lodgeTypes.default;
-  LodgeCard.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + advert.offer.guests +
+  var lodgeCard = template.querySelector('.dialog__panel').cloneNode(true);
+  lodgeCard.querySelector('.lodge__title').textContent = advert.offer.title;
+  lodgeCard.querySelector('.lodge__title').textContent = advert.offer.address;
+  lodgeCard.querySelector('.lodge__price').textContent = advert.offer.price + ' ' + '\u20BD/ночь';
+  lodgeCard.querySelector('.lodge__type').textContent = lodgeTypes[advert.offer.type] || lodgeTypes.default;
+  lodgeCard.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + advert.offer.guests +
     ' гостей в ' + advert.offer.rooms + ' комнатах';
-  LodgeCard.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + advert.offer.checkin +
+  lodgeCard.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + advert.offer.checkin +
     ', выезд до ' + advert.offer.checkout;
 
   advert.offer.features.forEach(function (element) {
     var span = document.createElement('span');
     span.className = 'feature__image feature__image--' + element;
-    LodgeCard.querySelector('.lodge__features').appendChild(span);
+    lodgeCard.querySelector('.lodge__features').appendChild(span);
   });
 
-  LodgeCard.querySelector('.lodge__description').textContent = advert.offer.description;
+  lodgeCard.querySelector('.lodge__description').textContent = advert.offer.description;
 
-  return LodgeCard;
+  return lodgeCard;
 };
 /**
  * Render lodge card on dialog-panel
  * @param {Node} filledTemplate
+ * @param {Node} oldChild
  */
-var renderLodgeCard = function (filledTemplate) {
+var renderLodgeCard = function (filledTemplate, oldChild) {
   var fragment = document.createDocumentFragment();
   fragment.appendChild(filledTemplate);
-  dialog.replaceChild(fragment, dialogPanel);
+  dialog.replaceChild(fragment, oldChild);
 };
 /**
  * Render lodge owner avatar
@@ -254,6 +256,138 @@ var offersList = createOffersList();
 renderPins(offersList, tokyoPinMap);
 // create and render lodge card
 var filledDialogPanelTemplate = createLodgeCard(lodgeTemplateContent, offersList[0]);
-renderLodgeCard(filledDialogPanelTemplate);
+renderLodgeCard(filledDialogPanelTemplate, dialogPanel);
 // render owner avatar
 renderDialogAvatar(offersList[0]);
+
+// Module4-task1
+
+var ENTER_CODE = 13;
+var ESC_CODE = 27;
+
+var tokyoMap = document.querySelector('.tokyo__pin-map');
+var pins = tokyoMap.querySelectorAll('.pin');
+var dialogClose = dialog.querySelector('.dialog__close');
+
+// Focus on the first not main pin
+pins[1].focus();
+
+/**
+ * Deactivate first found active pin
+ */
+var deactivatePin = function () {
+  var pinActive = tokyoMap.querySelector('.pin--active');
+
+  if (pinActive) {
+    pinActive.classList.remove('pin--active');
+  }
+};
+/**
+ * Make active only selected pin
+ * @param {Node} currentPin
+ */
+var makeOnePinActive = function (currentPin) {
+  pins.forEach(function () {
+    deactivatePin();
+  });
+  currentPin.classList.add('pin--active');
+};
+/**
+ * Returns index of searched lodge offer
+ * @param {string} currentSrc
+ * @return {number}
+ */
+var getOfferIndex = function (currentSrc) {
+  var j;
+  offersList.forEach(function (element, index) {
+    if (element.author.avatar === currentSrc) {
+      j = index;
+    }
+  });
+  return j;
+};
+/**
+ * Shows offer dialog
+ * @param {Node} currentPinImage
+ */
+var showDialog = function (currentPinImage) {
+  if (currentPinImage.className === 'rounded' && (currentPinImage.parentNode.className !== 'pin pin__main')) {
+    var index = getOfferIndex(currentPinImage.getAttribute('src'));
+    var offer = createLodgeCard(lodgeTemplateContent, offersList[index]);
+
+    makeOnePinActive(currentPinImage.parentNode);
+    renderLodgeCard(offer, dialog.querySelector('.dialog__panel'));
+    renderDialogAvatar(offersList[index]);
+
+    dialog.classList.remove('hidden');
+    dialogClose.setAttribute('tabindex', '0');
+
+    dialogClose.addEventListener('click', onDialogCloseClick);
+    dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
+    document.addEventListener('keydown', onDialogEscPress);
+  }
+};
+/**
+ * Close dialog
+ */
+var closeDialog = function () {
+  deactivatePin();
+
+  dialog.classList.add('hidden');
+  dialogClose.removeEventListener('click', onDialogCloseClick);
+  document.removeEventListener('keydown', onDialogEscPress);
+  dialogClose.removeEventListener('keydown', onDialogCloseEnterPress);
+};
+
+/**
+ * Activate selected pin on click and render it's lodge card
+ * @param {Object} evt
+ */
+var onPinClick = function (evt) {
+  showDialog(evt.target);
+};
+/**
+ * Activate selected pin on ENTER keydown and render it's lodge card
+ * @param {Object} evt
+ */
+var onPinEnterPress = function (evt) {
+  if (evt.keyCode === ENTER_CODE) {
+    showDialog(evt.target.firstChild);
+  }
+};
+
+/**
+ * Close dialog and deactivate pin on click
+ */
+var onDialogCloseClick = function () {
+  closeDialog();
+};
+/**
+ * Close dialog and deactivate pin on Esc keydown
+ * @param {Object} evt
+ */
+var onDialogEscPress = function (evt) {
+  if (evt.keyCode === ESC_CODE) {
+    closeDialog();
+  }
+};
+/**
+ * Close dialog and deactivate pin on ENTER keydown
+ * @param {Object} evt
+ */
+var onDialogCloseEnterPress = function (evt) {
+  if (evt.keyCode === ENTER_CODE) {
+    closeDialog();
+  }
+};
+
+// handlers for pins
+tokyoMap.addEventListener('click', onPinClick);
+tokyoMap.addEventListener('keydown', onPinEnterPress);
+
+// handlers for dialog-close element
+dialogClose.addEventListener('click', onDialogCloseClick);
+dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
+
+// handler for ESC
+document.addEventListener('keydown', onDialogEscPress);
