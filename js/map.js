@@ -262,8 +262,10 @@ renderDialogAvatar(offersList[0]);
 
 // Module4-task1
 
-var ENTER_CODE = 13;
-var ESC_CODE = 27;
+var KEY_CODES = {
+  enter: 13,
+  esc: 27
+};
 
 var tokyoMap = document.querySelector('.tokyo__pin-map');
 var pins = tokyoMap.querySelectorAll('.pin');
@@ -348,7 +350,7 @@ var onPinClick = function (evt) {
  * @param {Object} evt
  */
 var onPinEnterPress = function (evt) {
-  if (evt.keyCode === ENTER_CODE) {
+  if (evt.keyCode === KEY_CODES.enter) {
     showDialog(evt.target.firstChild);
   }
 };
@@ -364,7 +366,7 @@ var onDialogCloseClick = function () {
  * @param {Object} evt
  */
 var onDialogEscPress = function (evt) {
-  if (evt.keyCode === ESC_CODE) {
+  if (evt.keyCode === KEY_CODES.esc) {
     closeDialog();
   }
 };
@@ -373,7 +375,7 @@ var onDialogEscPress = function (evt) {
  * @param {Object} evt
  */
 var onDialogCloseEnterPress = function (evt) {
-  if (evt.keyCode === ENTER_CODE) {
+  if (evt.keyCode === KEY_CODES.enter) {
     closeDialog();
   }
 };
