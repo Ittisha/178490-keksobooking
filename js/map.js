@@ -311,7 +311,7 @@ var getOfferIndex = function (currentSrc) {
  * @param {Node} currentPinImage
  */
 var showDialog = function (currentPinImage) {
-  if (currentPinImage.className === 'rounded' && (currentPinImage.parentNode.className !== 'pin pin__main')) {
+  if ((currentPinImage.className === 'rounded') && (currentPinImage.parentNode.className !== 'pin  pin__main')) {
     var index = getOfferIndex(currentPinImage.getAttribute('src'));
     var offer = createLodgeCard(lodgeTemplateContent, offersList[index]);
 
