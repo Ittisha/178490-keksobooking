@@ -390,4 +390,4 @@ dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
 document.addEventListener('keydown', onDialogEscPress);
 
 // hide card on window load
-window.addEventListener('load', closeDialog());
+tokyoMap.addEventListener('load', closeDialog());
