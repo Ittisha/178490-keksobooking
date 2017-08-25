@@ -322,8 +322,6 @@ var showDialog = function (currentPinImage) {
     dialog.classList.remove('hidden');
     dialogClose.setAttribute('tabindex', '0');
 
-    dialogClose.addEventListener('click', onDialogCloseClick);
-    dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
     document.addEventListener('keydown', onDialogEscPress);
   }
 };
@@ -334,9 +332,7 @@ var closeDialog = function () {
   deactivatePin();
 
   dialog.classList.add('hidden');
-  dialogClose.removeEventListener('click', onDialogCloseClick);
   document.removeEventListener('keydown', onDialogEscPress);
-  dialogClose.removeEventListener('keydown', onDialogCloseEnterPress);
 };
 
 /**
