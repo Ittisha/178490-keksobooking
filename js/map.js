@@ -287,7 +287,8 @@ var deactivatePin = function () {
  * @param {Node} currentPin
  */
 var makeOnePinActive = function (currentPin) {
-  pins.forEach(function () {
+  // forEach doesn't work with Nodes in Edge
+  Array.prototype.forEach.call(pins, function () {
     deactivatePin();
   });
   currentPin.classList.add('pin--active');
