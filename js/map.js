@@ -388,3 +388,6 @@ dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
 
 // handler for ESC
 document.addEventListener('keydown', onDialogEscPress);
+
+// hide card on window load
+window.addEventListener('load', closeDialog());
