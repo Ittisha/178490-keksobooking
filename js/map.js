@@ -216,7 +216,7 @@ var createLodgeCard = function (template, advert) {
   var lodgeCard = template.querySelector('.dialog__panel').cloneNode(true);
   lodgeCard.querySelector('.lodge__title').textContent = advert.offer.title;
   lodgeCard.querySelector('.lodge__title').textContent = advert.offer.address;
-  lodgeCard.querySelector('.lodge__price').textContent = advert.offer.price + ' ' + '\u20BD/ночь';
+  lodgeCard.querySelector('.lodge__price').textContent = advert.offer.price.toLocaleString('ru') + ' ' + '\u20BD/ночь';
   lodgeCard.querySelector('.lodge__type').textContent = lodgeTypes[advert.offer.type] || lodgeTypes.default;
   lodgeCard.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + advert.offer.guests +
     ' гостей в ' + advert.offer.rooms + ' комнатах';
