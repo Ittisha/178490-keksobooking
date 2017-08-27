@@ -398,6 +398,43 @@ var roomNumberField = noticeForm.querySelector('#room_number');
 var capacityField = noticeForm.querySelector('#capacity');
 var submitButton = noticeForm.querySelector('.form__submit');
 var titleField = noticeForm.querySelector('#title');
+var addressField = noticeForm.querySelector('#address');
+
+var rewriteTitleValidationMessages = function (inputNode) {
+  var minLength = inputNode.getAttribute('minlength');
+  var maxLength = inputNode.getAttribute('maxlength');
+
+  if (inputNode.validity.tooShort) {
+    inputNode.setCustomValidity('Заголовок должен состоять минимум из ' + minLength + ' символов');
+  } else if (inputNode.validity.tooLong) {
+    inputNode.setCustomValidity('Заголовок не должен превышать ' + maxLength + 'символов');
+  } else if (inputNode.validity.valueMissing) {
+    inputNode.setCustomValidity('Обязательное поле');
+  } else {
+    inputNode.setCustomValidity('');
+  }
+};
+
+var rewriteAddressValidationMessages = function (inputNode) {
+  if (inputNode.validity.valueMissing) {
+    inputNode.setCustomValidity('Обязательное поле');
+  } else {
+    inputNode.setCustomValidity('');
+  }
+};
+
+var setInputCustomValidity = function (inputNode, callback) {
+  if (!inputNode.validity.valid) {
+    callback(inputNode);
+  }
+};
+
+var onTitleFieldInvalid = function () {
+  setInputCustomValidity(titleField, rewriteTitleValidationMessages);
+};
+var onAddressFieldInvalid = function () {
+  setInputCustomValidity(addressField, rewriteAddressValidationMessages);
+};
 
 var onTitleFieldInput = function (evt) {
   var minLength = evt.target.getAttribute('minlength');
@@ -410,6 +447,9 @@ var onTitleFieldInput = function (evt) {
 };
 
 titleField.addEventListener('input', onTitleFieldInput);
+titleField.addEventListener('invalid', onTitleFieldInvalid);
+addressField.addEventListener('input', onAddressFieldInvalid);
+addressField.addEventListener('invalid', onAddressFieldInvalid);
 
 var onTimeInTimeOutChange = function (evt) {
   var anotherTimeField = evt.target === timeInField ? timeOutField : timeInField;
@@ -435,6 +475,24 @@ var onLodgeTypeFieldChange = function (evt) {
   priceField.value = minPrice;
 };
 
+var rewritePriceValidationMessage = function (inputNode) {
+  var minPrice = inputNode.getAttribute('min');
+  var maxPrice = inputNode.getAttribute('max');
+
+  if (inputNode.validity.rangeUnderflow) {
+    inputNode.setCustomValidity('Значение должно быть больше или равно ' + (+minPrice).toLocaleString('ru'));
+  } else if (inputNode.validity.rangeOverflow) {
+    inputNode.setCustomValidity('Значение должно быть меньше или равно ' + (+maxPrice).toLocaleString('ru'));
+  } else if (inputNode.validity.valueMissing) {
+    inputNode.setCustomValidity('Обязательное поле');
+  } else {
+    inputNode.setCustomValidity('');
+  }
+};
+var onPriceFieldInvalid = function () {
+  setInputCustomValidity(priceField, rewritePriceValidationMessage);
+};
+priceField.addEventListener('invalid', onPriceFieldInvalid);
 lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
 
 var onRoomNumberChange = function (evt) {
