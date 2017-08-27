@@ -302,10 +302,9 @@ var makeOnePinActive = function (currentPin) {
  */
 var getOfferIndex = function (currentSrc) {
   var j;
-  offersList.forEach(function (element, index) {
-    if (element.author.avatar === currentSrc) {
-      j = index;
-    }
+  offersList.some(function (element, index) {
+    j = index;
+    return element.author.avatar === currentSrc;
   });
   return j;
 };
@@ -390,3 +389,103 @@ dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
 
 // handler for ESC
 document.addEventListener('keydown', onDialogEscPress);
+
+// Module4-task2
+var noticeForm = document.querySelector('.notice__form');
+var timeInField = noticeForm.querySelector('#timein');
+var timeOutField = noticeForm.querySelector('#timeout');
+var roomNumberField = noticeForm.querySelector('#room_number');
+var capacityField = noticeForm.querySelector('#capacity');
+var submitButton = noticeForm.querySelector('.form__submit');
+var titleField = noticeForm.querySelector('#title');
+
+var onTitleFieldInput = function (evt) {
+  var minLength = evt.target.getAttribute('minlength');
+  var target = evt.target;
+  if (target.value.length < minLength) {
+    target.setCustomValidity('Заголовок должен состоять минимум из ' + minLength + ' символов');
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
+titleField.addEventListener('input', onTitleFieldInput);
+
+var onTimeInTimeOutChange = function (evt) {
+  var anotherTimeField = evt.target === timeInField ? timeOutField : timeInField;
+  anotherTimeField.value = evt.target.value;
+};
+
+timeInField.addEventListener('change', onTimeInTimeOutChange);
+timeOutField.addEventListener('change', onTimeInTimeOutChange);
+
+var lodgeTypeField = noticeForm.querySelector('#type');
+var priceField = noticeForm.querySelector('#price');
+
+var typesMinPrices = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
+var onLodgeTypeFieldChange = function (evt) {
+  var minPrice = typesMinPrices[evt.target.value];
+  priceField.setAttribute('min', minPrice);
+  priceField.value = minPrice;
+};
+
+lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
+
+var onRoomNumberChange = function (evt) {
+  Array.prototype.forEach.call(capacityField.options, function (elem) {
+    elem.disabled = false;
+    if (evt.target.value === '100') {
+      if (elem.value !== '0') {
+        elem.disabled = true;
+      }
+    } else {
+      if (elem.value === '0') {
+        elem.disabled = true;
+      }
+      if (elem.value > roomNumberField.value) {
+        elem.disabled = true;
+      }
+    }
+  });
+  capacityField.value = roomNumberField.value === '100' ? '0' : '1';
+};
+
+roomNumberField.addEventListener('change', onRoomNumberChange);
+
+var checkValidationSubmit = function () {
+  var result = true;
+  Array.prototype.forEach.call(noticeForm.elements, function (elem) {
+    if ('reportValidity' in elem) {
+      elem.reportValidity();
+    }
+    if (elem.checkValidity()) {
+      elem.style.border = '1px solid #d9d9d3';
+    } else {
+      elem.style.border = '2px solid red';
+      elem.style.boxShadow = 'none';
+      result = false;
+    }
+  });
+  return result;
+};
+
+var sendForm = function (form) {
+  form.submit();
+  form.reset();
+};
+var onSubmitButtonClick = function (evt) {
+  evt.preventDefault();
+  if (checkValidationSubmit()) {
+    sendForm(noticeForm);
+  }
+};
+
+submitButton.addEventListener('click', onSubmitButtonClick);
+
+
