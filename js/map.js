@@ -28,23 +28,23 @@
    * @param {string} currentSrc
    * @return {number}
    */
-  var getOfferIndex = function (currentSrc) {
+  var getOfferData = function (currentSrc) {
     var j;
     window.data.some(function (element, index) {
       j = index;
       return element.author.avatar === currentSrc;
     });
-    return j;
+    return window.data[j];
   };
 
   var showDialog = function (currentPinImage) {
     if (currentPinImage.className === 'rounded' && !currentPinImage.parentNode.classList.contains('pin__main')) {
-      var index = getOfferIndex(currentPinImage.getAttribute('src'));
-      var offer = window.card.createLodgeCard(window.data[index]);
+      var offerData = getOfferData(currentPinImage.getAttribute('src'));
+      var offer = window.card.createLodgeCard(offerData);
 
       window.pin.makeOnePinActive(currentPinImage.parentNode, pins);
       window.card.renderLodgeCard(offer, dialog.querySelector('.dialog__panel'));
-      window.card.renderDialogAvatar(window.data[index]);
+      window.card.renderDialogAvatar(offerData);
 
       dialog.classList.remove('hidden');
       dialogClose.setAttribute('tabindex', '0');
