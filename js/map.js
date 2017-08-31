@@ -115,7 +115,24 @@
   var addressInput = document.getElementById('address');
 
   /**
-   * Return location coordinates in consideration of map size
+   * Set new pin position in consideration of limits
+   * @param {number} startPosition
+   * @param {Object} limits
+   * @param {number} pinSize
+   * @param {string} position
+   */
+  var setMainPinPosition = function (startPosition, limits, pinSize, position) {
+    mainPin.style[position] = startPosition + 'px';
+
+    if (startPosition < limits.min - pinSize) {
+      mainPin.style[position] = limits.min - pinSize + 'px';
+    }
+    if (startPosition > limits.max - pinSize) {
+      mainPin.style[position] = limits.max - pinSize + 'px';
+    }
+  };
+  /**
+   * Return location coordinates
    * @param {{x: number, y: number}} coords
    * @return {{x: number, y: number}}
    */
@@ -131,21 +148,8 @@
       }
     };
 
-    if (coords.x < MAP.width.min - mainPinWidth / 2) {
-      mainPin.style.left = MAP.width.min - mainPinWidth / 2 + 'px';
-    } else if (coords.x > (MAP.width.max - mainPinWidth / 2)) {
-      mainPin.style.left = MAP.width.max - mainPinWidth / 2 + 'px';
-    } else {
-      mainPin.style.left = coords.x + 'px';
-    }
-
-    if (coords.y < MAP.height.min - mainPinHeight) {
-      mainPin.style.top = MAP.height.min - mainPinHeight + ' px';
-    } else if (coords.y > MAP.height.max - mainPinHeight) {
-      mainPin.style.top = (MAP.height.max - mainPinHeight) + 'px';
-    } else {
-      mainPin.style.top = coords.y + 'px';
-    }
+    setMainPinPosition(coords.x, MAP.width, mainPinWidth / 2, 'left');
+    setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
 
     return {
       x: mainPin.offsetLeft + mainPinWidth / 2,
@@ -158,6 +162,7 @@
    */
   var onMainPinMouseDown = function (evt) {
     evt.preventDefault();
+    mainPin.style.zIndex = 1;
 
     var startCoords = {
       x: evt.clientX,
@@ -193,13 +198,14 @@
      */
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      mainPin.style.zIndex = 0;
 
-      mapForPinDrag.removeEventListener('mousemove', onMouseMove);
-      mapForPinDrag.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
     };
 
-    mapForPinDrag.addEventListener('mousemove', onMouseMove);
-    mapForPinDrag.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
 
   mainPin.addEventListener('mousedown', onMainPinMouseDown);
