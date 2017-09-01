@@ -110,10 +110,11 @@
 
   var mainPin = tokyoMap.querySelector('.pin__main');
   var mapForPinDrag = document.querySelector('.tokyo');
-  var mainPinWidth = mainPin.offsetWidth;
+  var halfMainPinWidth = mainPin.offsetWidth / 2;
   var mainPinHeight = mainPin.offsetHeight;
   var addressInput = document.getElementById('address');
-
+  // fill address input value
+  addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
   /**
    * Set new pin position in consideration of limits
    * @param {number} startPosition
@@ -148,11 +149,11 @@
       }
     };
 
-    setMainPinPosition(coords.x, MAP.width, mainPinWidth / 2, 'left');
+    setMainPinPosition(coords.x, MAP.width, halfMainPinWidth, 'left');
     setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
 
     return {
-      x: mainPin.offsetLeft + mainPinWidth / 2,
+      x: mainPin.offsetLeft + halfMainPinWidth,
       y: mainPin.offsetTop + mainPinHeight
     };
   };
