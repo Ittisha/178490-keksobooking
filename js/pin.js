@@ -15,13 +15,17 @@ window.pin = (function () {
     var IMG_HEIGHT = 40;
     var PIN_CLASS_NAME = 'pin';
     var IMG_CLASS_NAME = 'rounded';
+    var PIN_SIZE = {
+      width: 56,
+      height: 75
+    };
 
     var pin = document.createElement('div');
     var img = document.createElement('img');
 
     pin.className = PIN_CLASS_NAME;
-    pin.style.left = advert.location.x - pin.offsetWidth / 2 + 'px';
-    pin.style.top = advert.location.y - pin.offsetHeight + 'px';
+    pin.style.left = advert.location.x - PIN_SIZE.width / 2 + 'px';
+    pin.style.top = advert.location.y - PIN_SIZE.height + 'px';
     pin.setAttribute('tabindex', '0');
 
     img.className = IMG_CLASS_NAME;
