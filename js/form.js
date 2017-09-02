@@ -2,10 +2,8 @@
 
 (function () {
   var TYPES_MIN_PRICES = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000
+    types: ['bungalo', 'flat', 'house', 'palace'],
+    minPrice: [0, 1000, 5000, 10000]
   };
   var HUNDRED_ROOMS_VALUE = '100';
   var NO_GUESTS = '0';
@@ -141,43 +139,80 @@
   priceField.addEventListener('invalid', onPriceFieldInvalid);
 
   /**
+   * @param {Node} element
+   * @param {*} value
+   */
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
+  /**
+   * Get real array of options values from HTMLOptionsCollection
+   * @param {Node} selectNode
+   * @return {Array}
+   */
+  var getOptionsArray = function (selectNode) {
+    var optionsArray = [];
+    Array.prototype.forEach.call(selectNode.options, function (element, index) {
+      optionsArray[index] = element.value;
+    });
+    return optionsArray;
+  };
+  /**
    * Bind time in and time out changes
    * @param {Object} evt
    */
   var onTimeInTimeOutChange = function (evt) {
     var anotherTimeField = evt.target === timeInField ? timeOutField : timeInField;
-    anotherTimeField.value = evt.target.value;
+    var targetFieldData = getOptionsArray(evt.target);
+    var anotherFieldData = getOptionsArray(anotherTimeField);
+
+    window.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
   };
 
   timeInField.addEventListener('change', onTimeInTimeOutChange);
   timeOutField.addEventListener('change', onTimeInTimeOutChange);
 
   /**
+   * @param {Node} element
+   * @param {*} value
+   */
+  var syncValueWithMin = function (element, value) {
+    element.min = value;
+    element.value = value;
+  };
+
+  /**
    * Bind lodge type and min price
    * @param {Object} evt
    */
   var onLodgeTypeFieldChange = function (evt) {
-    var minPrice = TYPES_MIN_PRICES[evt.target.value];
-    priceField.setAttribute('min', minPrice);
-    priceField.value = minPrice;
+    window.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
   };
 
   lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
 
   /**
    * Bind rooms and guests quantities
+   * @param {Node} firstField
+   * @param {Node} secondField
+   */
+  var syncRoomsOptions = function (firstField, secondField) {
+    Array.prototype.forEach.call(secondField.options, function (elem) {
+      if (firstField.value === HUNDRED_ROOMS_VALUE) {
+        elem.disabled = elem.value !== NO_GUESTS;
+        secondField.value = NO_GUESTS;
+      } else {
+        elem.disabled = elem.value === NO_GUESTS || elem.value > firstField.value;
+        secondField.value = firstField.value;
+      }
+    });
+  };
+  /**
+   * Synchronize rooms and guests quantities on change
    * @param {Object} evt
    */
   var onRoomsNumberChange = function (evt) {
-    Array.prototype.forEach.call(guestsField.options, function (elem) {
-      if (evt.target.value === HUNDRED_ROOMS_VALUE) {
-        elem.disabled = elem.value !== NO_GUESTS;
-        guestsField.value = NO_GUESTS;
-      } else {
-        elem.disabled = elem.value === NO_GUESTS || elem.value > evt.target.value;
-        guestsField.value = evt.target.value;
-      }
-    });
+    window.synchronizeFields(evt.target, guestsField, syncRoomsOptions);
   };
 
   roomsNumberField.addEventListener('change', onRoomsNumberChange);
