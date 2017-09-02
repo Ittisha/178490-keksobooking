@@ -34,7 +34,7 @@ window.showCard = (function () {
       dialog.classList.remove('hidden');
       dialogClose.setAttribute('tabindex', '0');
 
-      document.addEventListener('keydown', window.onDialogEscPress);
+      document.addEventListener('keydown', window.card.onDialogEscPress);
     }
   };
 
