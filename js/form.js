@@ -20,11 +20,17 @@
     },
     missing: 'Обязательное поле'
   };
-
   var PRICE_VALIDITY_MESSAGES = {
     underFlow: 'Значение должно быть больше или равно ',
     overFlow: 'Значение должно быть меньше или равно ',
     missing: 'Обязательное поле'
+  };
+  var BORDER_STYLE_USUAL = {
+    border: '1px solid #d9d9d3'
+  };
+  var BORDER_STYLE_WRONG = {
+    border: '2px solid red',
+    boxShadow: 'none'
   };
 
   var noticeForm = document.querySelector('.notice__form');
@@ -177,20 +183,31 @@
   roomsNumberField.addEventListener('change', onRoomsNumberChange);
 
   /**
+   * Change border and box shadow styles
+   * @param {Node} node
+   * @param {Object} styles
+   */
+  var changeBorderStyle = function (node, styles) {
+    node.style.border = styles.border;
+    node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+  };
+  /**
    * Check form validation
    * @return {boolean}
    */
   var checkValidationSubmit = function () {
     var result = true;
+
     Array.prototype.forEach.call(noticeForm.elements, function (elem) {
+      // Edge doesn't have reportValidity method
       if ('reportValidity' in elem) {
         elem.reportValidity();
       }
+
       if (elem.checkValidity()) {
-        elem.style.border = '1px solid #d9d9d3';
+        changeBorderStyle(elem, BORDER_STYLE_USUAL);
       } else {
-        elem.style.border = '2px solid red';
-        elem.style.boxShadow = 'none';
+        changeBorderStyle(elem, BORDER_STYLE_WRONG);
         result = false;
       }
     });
