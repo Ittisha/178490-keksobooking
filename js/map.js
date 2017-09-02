@@ -7,8 +7,6 @@
   var dialog = document.querySelector('.dialog');
   var dialogPanel = dialog.querySelector('.dialog__panel');
 
-  var dialogClose = dialog.querySelector('.dialog__close');
-
   // create offers' list and render all pins on the map
   window.pin.renderPins(window.data, tokyoPinMap);
 
@@ -24,89 +22,25 @@
   pins[1].focus();
 
   /**
-   * Returns index of searched lodge offer
-   * @param {string} currentSrc
-   * @return {number}
-   */
-  var getOfferData = function (currentSrc) {
-    var j;
-    window.data.some(function (element, index) {
-      j = index;
-      return element.author.avatar === currentSrc;
-    });
-    return window.data[j];
-  };
-
-  var showDialog = function (currentPinImage) {
-    if (currentPinImage.className === 'rounded' && !currentPinImage.parentNode.classList.contains('pin__main')) {
-      var offerData = getOfferData(currentPinImage.getAttribute('src'));
-      var offer = window.card.createLodgeCard(offerData);
-
-      window.pin.makeOnePinActive(currentPinImage.parentNode, pins);
-      window.card.renderLodgeCard(offer, dialog.querySelector('.dialog__panel'));
-      window.card.renderDialogAvatar(offerData);
-
-      dialog.classList.remove('hidden');
-      dialogClose.setAttribute('tabindex', '0');
-
-      document.addEventListener('keydown', onDialogEscPress);
-    }
-  };
-  /**
-   * Close dialog
-   */
-  var closeDialog = function () {
-    window.pin.deactivatePin();
-
-    dialog.classList.add('hidden');
-    document.removeEventListener('keydown', onDialogEscPress);
-  };
-
-  /**
-   * Close dialog and deactivate pin on click
-   */
-  var onDialogCloseClick = function () {
-    closeDialog();
-  };
-  /**
-   * Close dialog and deactivate pin on Esc keydown
-   * @param {Object} evt
-   */
-  var onDialogEscPress = function (evt) {
-    window.util.isEscEvent(evt, closeDialog);
-  };
-  /**
-   * Close dialog and deactivate pin on ENTER keydown
-   * @param {Object} evt
-   */
-  var onDialogCloseEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, closeDialog);
-  };
-
-  /**
    * Activate selected pin on ENTER keydown and render it's lodge card
    * @param {Object} evt
    */
   var onPinEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, showDialog, evt.target.firstChild);
+    window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild);
+    window.pin.makeOnePinActive(evt.target, pins);
   };
   /**
    * Activate selected pin on click and render it's lodge card
    * @param {Object} evt
    */
   var onPinClick = function (evt) {
-    showDialog(evt.target);
+    window.showCard.showCard(evt.target);
+    window.pin.makeOnePinActive(evt.target.parentNode, pins);
   };
 
   // handlers for pins
   tokyoMap.addEventListener('click', onPinClick);
   tokyoMap.addEventListener('keydown', onPinEnterPress);
-
-  // handlers for dialog-close element
-  dialogClose.addEventListener('click', onDialogCloseClick);
-  dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
-
-  document.addEventListener('keydown', onDialogEscPress);
 
   var mainPin = tokyoMap.querySelector('.pin__main');
   var mapForPinDrag = document.querySelector('.tokyo');
