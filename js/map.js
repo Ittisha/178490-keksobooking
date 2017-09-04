@@ -3,52 +3,51 @@
 (function () {
   var tokyoPinMap = 'tokyo__pin-map';
   var tokyoMap = document.querySelector('.tokyo__pin-map');
-
-  var dialog = document.querySelector('.dialog');
-  var dialogPanel = dialog.querySelector('.dialog__panel');
-
-  // create offers' list and render all pins on the map
-  window.pin.renderPins(window.data, tokyoPinMap);
-
-  // create and render lodge card
-  var filledDialogPanelTemplate = window.card.createLodgeCard(window.data[0]);
-  window.card.renderLodgeCard(filledDialogPanelTemplate, dialogPanel);
-
-  // render owner avatar
-  window.card.renderDialogAvatar(window.data[0]);
-
-  var pins = tokyoMap.querySelectorAll('.pin');
-  // Focus on the first not main pin
-  pins[1].focus();
-
-  /**
-   * Activate selected pin on ENTER keydown and render it's lodge card
-   * @param {Object} evt
-   */
-  var onPinEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild);
-    window.pin.makeOnePinActive(evt.target, pins);
-  };
-  /**
-   * Activate selected pin on click and render it's lodge card
-   * @param {Object} evt
-   */
-  var onPinClick = function (evt) {
-    window.showCard.showCard(evt.target);
-    window.pin.makeOnePinActive(evt.target.parentNode, pins);
-  };
-
-  // handlers for pins
-  tokyoMap.addEventListener('click', onPinClick);
-  tokyoMap.addEventListener('keydown', onPinEnterPress);
-
   var mainPin = tokyoMap.querySelector('.pin__main');
   var mapForPinDrag = document.querySelector('.tokyo');
+
   var halfMainPinWidth = mainPin.offsetWidth / 2;
   var mainPinHeight = mainPin.offsetHeight;
+
   var addressInput = document.getElementById('address');
   // fill address input value
   addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+
+  /**
+   * Render server data
+   * @param {Array} offersData
+   */
+  var renderServerData = function (offersData) {
+    // render all pins on the map
+    window.pin.renderPins(offersData, tokyoPinMap);
+    var pins = tokyoMap.querySelectorAll('.pin');
+    // Focus on the first not main pin
+    pins[1].focus();
+
+    /**
+     * Activate selected pin on ENTER keydown and render it's lodge card
+     * @param {Object} evt
+     */
+    var onPinEnterPress = function (evt) {
+      window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild, offersData);
+      window.pin.makeOnePinActive(evt.target, pins);
+    };
+    /**
+     * Activate selected pin on click and render it's lodge card
+     * @param {Object} evt
+     */
+    var onPinClick = function (evt) {
+      window.showCard.showCard(evt.target, offersData);
+      window.pin.makeOnePinActive(evt.target.parentNode, pins);
+    };
+
+    // handlers for pins
+    tokyoMap.addEventListener('click', onPinClick);
+    tokyoMap.addEventListener('keydown', onPinEnterPress);
+  };
+
+  window.backend.load(renderServerData, window.backend.showError);
+
   /**
    * Set new pin position in consideration of limits
    * @param {number} startPosition
