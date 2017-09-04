@@ -1,25 +1,61 @@
 'use strict';
 
 (function () {
+  var TYPES_MIN_PRICES = {
+    types: ['bungalo', 'flat', 'house', 'palace'],
+    minPrice: [0, 1000, 5000, 10000]
+  };
+  var HUNDRED_ROOMS_VALUE = '100';
+  var NO_GUESTS = '0';
+  var TITLE_VALIDITY_MESSAGES = {
+    short: {
+      firstPart: 'Заголовок должен состоять минимум из ',
+      lastPart: ' символов'
+    },
+    long: {
+      firstPart: 'Заголовок не должен превышать ',
+      lastPart: ' символов'
+    },
+    missing: 'Обязательное поле'
+  };
+  var PRICE_VALIDITY_MESSAGES = {
+    underFlow: 'Значение должно быть больше или равно ',
+    overFlow: 'Значение должно быть меньше или равно ',
+    missing: 'Обязательное поле'
+  };
+  var BORDER_STYLE_USUAL = {
+    border: '1px solid #d9d9d3'
+  };
+  var BORDER_STYLE_WRONG = {
+    border: '2px solid red',
+    boxShadow: 'none'
+  };
+
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
   var timeOutField = noticeForm.querySelector('#timeout');
   var roomsNumberField = noticeForm.querySelector('#room_number');
   var guestsField = noticeForm.querySelector('#capacity');
   var titleField = noticeForm.querySelector('#title');
-  var addressField = noticeForm.querySelector('#address');
   var lodgeTypeField = noticeForm.querySelector('#type');
   var priceField = noticeForm.querySelector('#price');
   var submitButton = noticeForm.querySelector('.form__submit');
 
-  var TYPES_MIN_PRICES = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000
+  /**
+   *Set custom validity
+   * @param {Node} inputNode
+   * @param {boolean} booleanCondition
+   * @param {string} message1
+   * @param {string} quantity
+   * @param {string} message2
+   */
+  var setNewValidationMessage = function (inputNode, booleanCondition, message1, quantity, message2) {
+    if (booleanCondition) {
+      var messageEnd = typeof message2 !== 'undefined' ? message2 : '';
+      var number = typeof quantity !== 'undefined' ? quantity : '';
+      inputNode.setCustomValidity(message1 + number + messageEnd);
+    }
   };
-  var HUNDRED_ROOMS_VALUE = '100';
-  var NO_GUESTS = '0';
 
   /**
    * Rewrite title validation messages in russian
@@ -29,27 +65,15 @@
     var minLength = inputNode.getAttribute('minlength');
     var maxLength = inputNode.getAttribute('maxlength');
 
-    if (inputNode.validity.tooShort) {
-      inputNode.setCustomValidity('Заголовок должен состоять минимум из ' + minLength + ' символов');
-    } else if (inputNode.validity.tooLong) {
-      inputNode.setCustomValidity('Заголовок не должен превышать ' + maxLength + 'символов');
-    } else if (inputNode.validity.valueMissing) {
-      inputNode.setCustomValidity('Обязательное поле');
-    } else {
-      inputNode.setCustomValidity('');
-    }
+    inputNode.setCustomValidity('');
+
+    setNewValidationMessage(inputNode, inputNode.validity.tooShort, TITLE_VALIDITY_MESSAGES.short.firstPart, minLength,
+        TITLE_VALIDITY_MESSAGES.short.lastPart);
+    setNewValidationMessage(inputNode, inputNode.validity.tooLong, TITLE_VALIDITY_MESSAGES.long.firstPart, maxLength,
+        TITLE_VALIDITY_MESSAGES.long.lastPart);
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, TITLE_VALIDITY_MESSAGES.missing);
   };
-  /**
-   * Rewrite address validation messages in russian
-   * @param {Node} inputNode
-   */
-  var rewriteAddressValidationMessages = function (inputNode) {
-    if (inputNode.validity.valueMissing) {
-      inputNode.setCustomValidity('Обязательное поле');
-    } else {
-      inputNode.setCustomValidity('');
-    }
-  };
+
   /**
    * Validate title min-length for Edge
    * @param {Object} evt
@@ -57,8 +81,9 @@
   var onTitleFieldInput = function (evt) {
     var minLength = evt.target.getAttribute('minlength');
     var target = evt.target;
+
     if (target.value.length < minLength) {
-      target.setCustomValidity('Заголовок должен состоять минимум из ' + minLength + ' символов');
+      target.setCustomValidity(TITLE_VALIDITY_MESSAGES.short.firstPart + minLength + TITLE_VALIDITY_MESSAGES.short.lastPart);
     } else {
       target.setCustomValidity('');
     }
@@ -67,19 +92,16 @@
    * Rewrite price validation messages in russian
    * @param {Node} inputNode
    */
-  var rewritePriceValidationMessage = function (inputNode) {
+  var rewritePriceValidationMessages = function (inputNode) {
     var minPrice = inputNode.getAttribute('min');
     var maxPrice = inputNode.getAttribute('max');
 
-    if (inputNode.validity.rangeUnderflow) {
-      inputNode.setCustomValidity('Значение должно быть больше или равно ' + (+minPrice).toLocaleString('ru'));
-    } else if (inputNode.validity.rangeOverflow) {
-      inputNode.setCustomValidity('Значение должно быть меньше или равно ' + (+maxPrice).toLocaleString('ru'));
-    } else if (inputNode.validity.valueMissing) {
-      inputNode.setCustomValidity('Обязательное поле');
-    } else {
-      inputNode.setCustomValidity('');
-    }
+    inputNode.setCustomValidity('');
+    setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow, PRICE_VALIDITY_MESSAGES.underFlow,
+        (+minPrice).toLocaleString('ru'));
+    setNewValidationMessage(inputNode, inputNode.validity.rangeOverflow, PRICE_VALIDITY_MESSAGES.overFlow,
+        (+maxPrice).toLocaleString('ru'));
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, PRICE_VALIDITY_MESSAGES.missing);
   };
   /**
    * Call callback-function if input invalid
@@ -98,108 +120,129 @@
     setInputCustomValidity(titleField, rewriteTitleValidationMessages);
   };
   /**
-   * Call new validation messages if address field invalid
-   */
-  var onAddressFieldInvalid = function () {
-    setInputCustomValidity(addressField, rewriteAddressValidationMessages);
-  };
-  /**
-   * Call new validation messages on address field input
-   */
-  var onAddressFieldInput = function () {
-    setInputCustomValidity(addressField, rewriteAddressValidationMessages);
-  };
-  /**
    * Call new validation messages if price field invalid
    */
   var onPriceFieldInvalid = function () {
-    setInputCustomValidity(priceField, rewritePriceValidationMessage);
+    setInputCustomValidity(priceField, rewritePriceValidationMessages);
   };
   /**
    * Call new validation messages on price field input
    */
   var onPriceFieldInput = function () {
-    setInputCustomValidity(priceField, rewritePriceValidationMessage);
+    setInputCustomValidity(priceField, rewritePriceValidationMessages);
   };
 
   titleField.addEventListener('input', onTitleFieldInput);
   titleField.addEventListener('invalid', onTitleFieldInvalid);
 
-  addressField.addEventListener('input', onAddressFieldInput);
-  addressField.addEventListener('invalid', onAddressFieldInvalid);
-
   priceField.addEventListener('input', onPriceFieldInput);
   priceField.addEventListener('invalid', onPriceFieldInvalid);
 
+  /**
+   * @param {Node} element
+   * @param {*} value
+   */
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
+  /**
+   * Get real array of options values from HTMLOptionsCollection
+   * @param {Node} selectNode
+   * @return {Array}
+   */
+  var getOptionsArray = function (selectNode) {
+    var optionsArray = [];
+    Array.prototype.forEach.call(selectNode.options, function (element, index) {
+      optionsArray[index] = element.value;
+    });
+    return optionsArray;
+  };
   /**
    * Bind time in and time out changes
    * @param {Object} evt
    */
   var onTimeInTimeOutChange = function (evt) {
     var anotherTimeField = evt.target === timeInField ? timeOutField : timeInField;
-    anotherTimeField.value = evt.target.value;
+    var targetFieldData = getOptionsArray(evt.target);
+    var anotherFieldData = getOptionsArray(anotherTimeField);
+
+    window.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
   };
 
   timeInField.addEventListener('change', onTimeInTimeOutChange);
   timeOutField.addEventListener('change', onTimeInTimeOutChange);
 
   /**
+   * @param {Node} element
+   * @param {*} value
+   */
+  var syncValueWithMin = function (element, value) {
+    element.min = value;
+    element.value = value;
+  };
+
+  /**
    * Bind lodge type and min price
    * @param {Object} evt
    */
   var onLodgeTypeFieldChange = function (evt) {
-    var minPrice = TYPES_MIN_PRICES[evt.target.value];
-    priceField.setAttribute('min', minPrice);
-    priceField.value = minPrice;
+    window.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
   };
 
   lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
 
   /**
    * Bind rooms and guests quantities
+   * @param {Node} firstField
+   * @param {Node} secondField
+   */
+  var syncRoomsOptions = function (firstField, secondField) {
+    Array.prototype.forEach.call(secondField.options, function (elem) {
+      if (firstField.value === HUNDRED_ROOMS_VALUE) {
+        elem.disabled = elem.value !== NO_GUESTS;
+        secondField.value = NO_GUESTS;
+      } else {
+        elem.disabled = elem.value === NO_GUESTS || elem.value > firstField.value;
+        secondField.value = firstField.value;
+      }
+    });
+  };
+  /**
+   * Synchronize rooms and guests quantities on change
    * @param {Object} evt
    */
-  var onRoomsGuestsChange = function (evt) {
-    var anotherField = evt.target === roomsNumberField ? guestsField : roomsNumberField;
-    var switchedValue = evt.target.value;
-
-    if (anotherField === guestsField) {
-      if (switchedValue === HUNDRED_ROOMS_VALUE) {
-        anotherField.value = NO_GUESTS;
-      } else if (+switchedValue > +anotherField.value) {
-        anotherField.value = anotherField.value === '0' ? switchedValue : anotherField.value;
-      } else {
-        anotherField.value = switchedValue;
-      }
-    } else {
-      if (switchedValue === '0') {
-        anotherField.value = '100';
-      } else if (+switchedValue > +anotherField.value || (+switchedValue < +anotherField.value && anotherField.value === '100')) {
-        anotherField.value = switchedValue;
-      } else {
-        anotherField.value = anotherField.value;
-      }
-    }
+  var onRoomsNumberChange = function (evt) {
+    window.synchronizeFields(evt.target, guestsField, syncRoomsOptions);
   };
 
-  roomsNumberField.addEventListener('change', onRoomsGuestsChange);
-  guestsField.addEventListener('change', onRoomsGuestsChange);
+  roomsNumberField.addEventListener('change', onRoomsNumberChange);
 
+  /**
+   * Change border and box shadow styles
+   * @param {Node} node
+   * @param {Object} styles
+   */
+  var changeBorderStyle = function (node, styles) {
+    node.style.border = styles.border;
+    node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+  };
   /**
    * Check form validation
    * @return {boolean}
    */
   var checkValidationSubmit = function () {
     var result = true;
+
     Array.prototype.forEach.call(noticeForm.elements, function (elem) {
+      // Edge doesn't have reportValidity method
       if ('reportValidity' in elem) {
         elem.reportValidity();
       }
+
       if (elem.checkValidity()) {
-        elem.style.border = '1px solid #d9d9d3';
+        changeBorderStyle(elem, BORDER_STYLE_USUAL);
       } else {
-        elem.style.border = '2px solid red';
-        elem.style.boxShadow = 'none';
+        changeBorderStyle(elem, BORDER_STYLE_WRONG);
         result = false;
       }
     });

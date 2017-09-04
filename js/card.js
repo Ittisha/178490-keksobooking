@@ -3,6 +3,7 @@
 // create and render lodge offer card and user avatar
 window.card = (function () {
   var dialog = document.querySelector('.dialog');
+  var dialogClose = dialog.querySelector('.dialog__close');
 
   var lodgeTemplate = document.querySelector('#lodge-template');
   var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
@@ -58,10 +59,46 @@ window.card = (function () {
   var renderDialogAvatar = function (advert) {
     dialog.querySelector('.dialog__title img').src = advert.author.avatar;
   };
+  /**
+   * Close dialog
+   */
+  var closeDialog = function () {
+    window.pin.deactivatePin();
+
+    dialog.classList.add('hidden');
+    document.removeEventListener('keydown', onDialogEscPress);
+  };
+  /**
+   * Close dialog and deactivate pin on click
+   */
+  var onDialogCloseClick = function () {
+    closeDialog();
+  };
+  /**
+   * Close dialog and deactivate pin on Esc keydown
+   * @param {Object} evt
+   */
+  var onDialogEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeDialog);
+  };
+  /**
+   * Close dialog and deactivate pin on ENTER keydown
+   * @param {Object} evt
+   */
+  var onDialogCloseEnterPress = function (evt) {
+    window.util.isEnterEvent(evt, closeDialog);
+  };
+
+  // handlers for dialog-close element
+  dialogClose.addEventListener('click', onDialogCloseClick);
+  dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
+
+  document.addEventListener('keydown', onDialogEscPress);
 
   return {
     createLodgeCard: createLodgeCard,
     renderLodgeCard: renderLodgeCard,
-    renderDialogAvatar: renderDialogAvatar
+    renderDialogAvatar: renderDialogAvatar,
+    onDialogEscPress: onDialogEscPress
   };
 })();
