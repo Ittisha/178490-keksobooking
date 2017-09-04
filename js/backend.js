@@ -68,7 +68,7 @@ window.backend = (function () {
     containerCloseButton.classList.add('error-message__close-button');
 
     errorContainer.appendChild(containerCloseButton);
-    document.body.appendChild(errorMessage);
+    document.body.appendChild(errorContainer);
 
     var closeErrorContainer = function () {
       document.body.removeChild(errorContainer);
