@@ -63,11 +63,12 @@ window.util = (function () {
    * Do action if Enter pressed
   * @param {Object} evt
   * @param {Function} action
-   * @param {*} param - of callback
+   * @param {*} param1 - callback param
+   * @param {*} param2 - callback param
   */
-  var isEnterEvent = function (evt, action, param) {
+  var isEnterEvent = function (evt, action, param1, param2) {
     if (evt.keyCode === KEY_CODES.enter) {
-      action(param);
+      action(param1, param2);
     }
   };
 

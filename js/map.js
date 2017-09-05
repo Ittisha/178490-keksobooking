@@ -1,54 +1,57 @@
 'use strict';
 
-(function () {
+window.map = (function () {
   var tokyoPinMap = 'tokyo__pin-map';
   var tokyoMap = document.querySelector('.tokyo__pin-map');
-
-  var dialog = document.querySelector('.dialog');
-  var dialogPanel = dialog.querySelector('.dialog__panel');
-
-  // create offers' list and render all pins on the map
-  window.pin.renderPins(window.data, tokyoPinMap);
-
-  // create and render lodge card
-  var filledDialogPanelTemplate = window.card.createLodgeCard(window.data[0]);
-  window.card.renderLodgeCard(filledDialogPanelTemplate, dialogPanel);
-
-  // render owner avatar
-  window.card.renderDialogAvatar(window.data[0]);
-
-  var pins = tokyoMap.querySelectorAll('.pin');
-  // Focus on the first not main pin
-  pins[1].focus();
-
-  /**
-   * Activate selected pin on ENTER keydown and render it's lodge card
-   * @param {Object} evt
-   */
-  var onPinEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild);
-    window.pin.makeOnePinActive(evt.target, pins);
-  };
-  /**
-   * Activate selected pin on click and render it's lodge card
-   * @param {Object} evt
-   */
-  var onPinClick = function (evt) {
-    window.showCard.showCard(evt.target);
-    window.pin.makeOnePinActive(evt.target.parentNode, pins);
-  };
-
-  // handlers for pins
-  tokyoMap.addEventListener('click', onPinClick);
-  tokyoMap.addEventListener('keydown', onPinEnterPress);
-
   var mainPin = tokyoMap.querySelector('.pin__main');
   var mapForPinDrag = document.querySelector('.tokyo');
+
   var halfMainPinWidth = mainPin.offsetWidth / 2;
   var mainPinHeight = mainPin.offsetHeight;
+
   var addressInput = document.getElementById('address');
-  // fill address input value
-  addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+
+  var setAddressValue = function () {
+    addressInput.value = 'x: ' + Math.floor(mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+  };
+
+  setAddressValue();
+
+  /**
+   * Render server data
+   * @param {Array} offersData
+   */
+  var renderServerData = function (offersData) {
+    // render all pins on the map
+    window.pin.renderPins(offersData, tokyoPinMap);
+    var pins = tokyoMap.querySelectorAll('.pin');
+    // Focus on the first not main pin
+    pins[1].focus();
+
+    /**
+     * Activate selected pin on ENTER keydown and render it's lodge card
+     * @param {Object} evt
+     */
+    var onPinEnterPress = function (evt) {
+      window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild, offersData);
+      window.pin.makeOnePinActive(evt.target, pins);
+    };
+    /**
+     * Activate selected pin on click and render it's lodge card
+     * @param {Object} evt
+     */
+    var onPinClick = function (evt) {
+      window.showCard.showCard(evt.target, offersData);
+      window.pin.makeOnePinActive(evt.target.parentNode, pins);
+    };
+
+    // handlers for pins
+    tokyoMap.addEventListener('click', onPinClick);
+    tokyoMap.addEventListener('keydown', onPinEnterPress);
+  };
+
+  window.backend.load(renderServerData, window.backend.showError);
+
   /**
    * Set new pin position in consideration of limits
    * @param {number} startPosition
@@ -67,11 +70,10 @@
     }
   };
   /**
-   * Return location coordinates
+   * Set new location coordinates
    * @param {{x: number, y: number}} coords
-   * @return {{x: number, y: number}}
    */
-  var getLocationCoords = function (coords) {
+  var setLocationCoords = function (coords) {
     var MAP = {
       width: {
         min: 0,
@@ -86,10 +88,6 @@
     setMainPinPosition(coords.x, MAP.width, halfMainPinWidth, 'left');
     setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
 
-    return {
-      x: mainPin.offsetLeft + halfMainPinWidth,
-      y: mainPin.offsetTop + mainPinHeight
-    };
   };
 
   /**
@@ -124,9 +122,9 @@
         y: mainPin.offsetTop - shift.y
       };
 
-      var locationCoords = getLocationCoords(mainPinCoords);
+      setLocationCoords(mainPinCoords);
 
-      addressInput.value = 'x: ' + locationCoords.x + ', y: ' + locationCoords.y;
+      setAddressValue();
     };
     /**
      * @param {Object} upEvt
@@ -144,4 +142,8 @@
   };
 
   mainPin.addEventListener('mousedown', onMainPinMouseDown);
+
+  return {
+    setAddressValue: setAddressValue
+  };
 })();

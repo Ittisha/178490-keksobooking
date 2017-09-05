@@ -40,6 +40,14 @@ window.card = (function () {
 
     lodgeCard.querySelector('.lodge__description').textContent = advert.offer.description;
 
+    if (advert.offer.photos.length) {
+      var img = document.createElement('img');
+      img.src = window.util.getRandomArrayItem(advert.offer.photos);
+      img.style.width = '150px';
+      img.style.height = 'auto';
+      lodgeCard.querySelector('.lodge__photos').appendChild(img);
+    }
+
     return lodgeCard;
   };
   /**
