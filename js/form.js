@@ -250,12 +250,18 @@
   };
 
   /**
+   * Reset form and set address pin value
+   */
+  var resetForm = function () {
+    noticeForm.reset();
+    window.map.setAddressValue();
+  };
+  /**
    * Send form if validation passed, reset data after submit
    */
   var sendForm = function () {
     if (checkValidationSubmit()) {
-      noticeForm.submit();
-      noticeForm.reset();
+      window.backend.save(new FormData(noticeForm), resetForm, window.backend.showError);
     }
   };
   /**

@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.map = (function () {
   var tokyoPinMap = 'tokyo__pin-map';
   var tokyoMap = document.querySelector('.tokyo__pin-map');
   var mainPin = tokyoMap.querySelector('.pin__main');
@@ -10,8 +10,12 @@
   var mainPinHeight = mainPin.offsetHeight;
 
   var addressInput = document.getElementById('address');
-  // fill address input value
-  addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+
+  var setAddressValue = function () {
+    addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+  };
+
+  setAddressValue();
 
   /**
    * Render server data
@@ -66,11 +70,10 @@
     }
   };
   /**
-   * Return location coordinates
+   * Set new location coordinates
    * @param {{x: number, y: number}} coords
-   * @return {{x: number, y: number}}
    */
-  var getLocationCoords = function (coords) {
+  var setLocationCoords = function (coords) {
     var MAP = {
       width: {
         min: 0,
@@ -85,10 +88,6 @@
     setMainPinPosition(coords.x, MAP.width, halfMainPinWidth, 'left');
     setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
 
-    return {
-      x: mainPin.offsetLeft + halfMainPinWidth,
-      y: mainPin.offsetTop + mainPinHeight
-    };
   };
 
   /**
@@ -123,9 +122,9 @@
         y: mainPin.offsetTop - shift.y
       };
 
-      var locationCoords = getLocationCoords(mainPinCoords);
+      setLocationCoords(mainPinCoords);
 
-      addressInput.value = 'x: ' + locationCoords.x + ', y: ' + locationCoords.y;
+      setAddressValue();
     };
     /**
      * @param {Object} upEvt
@@ -143,4 +142,8 @@
   };
 
   mainPin.addEventListener('mousedown', onMainPinMouseDown);
+
+  return {
+    setAddressValue: setAddressValue
+  };
 })();
