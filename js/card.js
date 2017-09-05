@@ -78,10 +78,8 @@ window.card = (function () {
   };
   /**
    * Close dialog and deactivate pin on click
-   * @param {Object} evt
    */
-  var onDialogCloseClick = function (evt) {
-    evt.preventDefault();
+  var onDialogCloseClick = function () {
     closeDialog();
   };
   /**
@@ -89,7 +87,6 @@ window.card = (function () {
    * @param {Object} evt
    */
   var onDialogEscPress = function (evt) {
-    evt.preventDefault();
     window.util.isEscEvent(evt, closeDialog);
   };
   /**
@@ -97,7 +94,6 @@ window.card = (function () {
    * @param {Object} evt
    */
   var onDialogCloseEnterPress = function (evt) {
-    evt.preventDefault();
     window.util.isEnterEvent(evt, closeDialog);
   };
 
