@@ -64,28 +64,37 @@ window.backend = (function () {
     errorContainer.classList.add('error-message');
     errorContainer.textContent = errorMessage;
 
-    var containerCloseButton = document.createElement('button');
-    containerCloseButton.classList.add('error-message__close-button');
+    var containerClose = document.createElement('a');
+    containerClose.setAttribute('href', '#');
+    containerClose.classList.add('error-message__close');
 
-    errorContainer.appendChild(containerCloseButton);
+    var closeImg = document.createElement('img');
+    closeImg.setAttribute('alt', 'close');
+    closeImg.setAttribute('width', '22');
+    closeImg.setAttribute('height', '22');
+    closeImg.setAttribute('src', 'img/close.svg');
+
+    containerClose.appendChild(closeImg);
+    errorContainer.appendChild(containerClose);
     document.body.appendChild(errorContainer);
 
-    var closeErrorContainer = function () {
+    var closeErrorContainer = function (evt) {
+      evt.preventDefault();
       document.body.removeChild(errorContainer);
 
-      containerCloseButton.removeEventListener('click', onContainerCloseButtonClick);
-      containerCloseButton.removeEventListener('keydown', onContainerCloseButtonEnterPress);
+      containerClose.removeEventListener('click', onContainerCloseButtonClick);
+      containerClose.removeEventListener('keydown', onContainerCloseButtonEnterPress);
     };
 
-    var onContainerCloseButtonClick = function () {
-      closeErrorContainer();
+    var onContainerCloseButtonClick = function (evt) {
+      closeErrorContainer(evt);
     };
     var onContainerCloseButtonEnterPress = function (evt) {
       window.util.isEnterEvent(evt, closeErrorContainer);
     };
 
-    containerCloseButton.addEventListener('click', onContainerCloseButtonClick);
-    containerCloseButton.addEventListener('keydown', onContainerCloseButtonEnterPress);
+    containerClose.addEventListener('click', onContainerCloseButtonClick);
+    containerClose.addEventListener('keydown', onContainerCloseButtonEnterPress);
   };
   return {
     load: load,
