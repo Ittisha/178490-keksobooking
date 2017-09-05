@@ -166,7 +166,7 @@
     var targetFieldData = getOptionsArray(evt.target);
     var anotherFieldData = getOptionsArray(anotherTimeField);
 
-    window.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
+    window.synchronizeFields.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
   };
 
   timeInField.addEventListener('change', onTimeInTimeOutChange);
@@ -186,7 +186,7 @@
    * @param {Object} evt
    */
   var onLodgeTypeFieldChange = function (evt) {
-    window.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
+    window.synchronizeFields.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
   };
 
   lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
@@ -212,7 +212,7 @@
    * @param {Object} evt
    */
   var onRoomsNumberChange = function (evt) {
-    window.synchronizeFields(evt.target, guestsField, syncRoomsOptions);
+    window.synchronizeFields.synchronizeFields(evt.target, guestsField, syncRoomsOptions);
   };
 
   roomsNumberField.addEventListener('change', onRoomsNumberChange);

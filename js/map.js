@@ -12,7 +12,7 @@ window.map = (function () {
   var addressInput = document.getElementById('address');
 
   var setAddressValue = function () {
-    addressInput.value = 'x: ' + (mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+    addressInput.value = 'x: ' + Math.floor(mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
   };
 
   setAddressValue();
