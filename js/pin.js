@@ -74,9 +74,20 @@ window.pin = (function () {
     currentPin.classList.add('pin--active');
   };
 
+  /**
+   * Delete pins from tokyo map
+   */
+  var deletePins = function () {
+    Array.prototype.forEach.call(tokyoMap.querySelectorAll('.pin'), function (element) {
+      if (!element.classList.contains('pin__main')) {
+        tokyoMap.removeChild(element);
+      }
+    });
+  };
   return {
     renderPins: renderPins,
     deactivatePin: deactivatePin,
-    makeOnePinActive: makeOnePinActive
+    makeOnePinActive: makeOnePinActive,
+    deletePins: deletePins
   };
 })();

@@ -48,9 +48,19 @@ window.map = (function () {
     // handlers for pins
     tokyoMap.addEventListener('click', onPinClick);
     tokyoMap.addEventListener('keydown', onPinEnterPress);
+
   };
 
-  window.backend.load(renderServerData, window.backend.showError);
+  /**
+   * On success data load handler
+   * @param {Array} data
+   */
+  var onSuccess = function (data) {
+    renderServerData(data);
+    window.filters.activateFilters(data);
+  };
+
+  window.backend.load(onSuccess, window.backend.showError);
 
   /**
    * Set new pin position in consideration of limits
