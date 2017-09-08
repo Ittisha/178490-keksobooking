@@ -92,6 +92,7 @@ window.filters = (function () {
      * Render required pins, delete others
      */
     var renderFilteredPins = function () {
+      window.card.closeDialog();
       window.pin.deletePins();
       window.pin.renderPins(getFilteredAdverts(data), tokyoPinMap);
     };

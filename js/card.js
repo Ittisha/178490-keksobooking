@@ -110,6 +110,7 @@ window.card = (function () {
     createLodgeCard: createLodgeCard,
     renderLodgeCard: renderLodgeCard,
     renderDialogAvatar: renderDialogAvatar,
-    onDialogEscPress: onDialogEscPress
+    onDialogEscPress: onDialogEscPress,
+    closeDialog: closeDialog
   };
 })();
