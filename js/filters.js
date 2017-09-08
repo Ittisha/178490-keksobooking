@@ -99,25 +99,25 @@ window.filters = (function () {
      * On type filter change handler
      */
     var onTypeFilterChange = function () {
-      renderFilteredPins();
+      window.debounce.debounce(renderFilteredPins);
     };
     /**
      * On rooms filter change handler
      */
     var onRoomsFilterChange = function () {
-      renderFilteredPins();
+      window.debounce.debounce(renderFilteredPins);
     };
     /**
      * On guests filter change handler
      */
     var onGuestsFilterChange = function () {
-      renderFilteredPins();
+      window.debounce.debounce(renderFilteredPins);
     };
     /**
      * On price filter change handler
      */
     var onPriceFilterChange = function () {
-      renderFilteredPins();
+      window.debounce.debounce(renderFilteredPins);
     };
     /**
      * On features filter change handler
@@ -125,7 +125,7 @@ window.filters = (function () {
      */
     var onFeaturesFilterChange = function (evt) {
       if (evt.target.type === 'checkbox') {
-        renderFilteredPins();
+        window.debounce.debounce(renderFilteredPins);
       }
     };
 
