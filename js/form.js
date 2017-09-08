@@ -193,26 +193,23 @@
 
   /**
    * Bind rooms and guests quantities
-   * @param {Node} firstField
-   * @param {Node} secondField
    */
-  var syncRoomsOptions = function (firstField, secondField) {
-    Array.prototype.forEach.call(secondField.options, function (elem) {
-      if (firstField.value === HUNDRED_ROOMS_VALUE) {
+  var syncRoomsOptions = function () {
+    Array.prototype.forEach.call(guestsField.options, function (elem) {
+      if (roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
         elem.disabled = elem.value !== NO_GUESTS;
-        secondField.value = NO_GUESTS;
+        guestsField.value = NO_GUESTS;
       } else {
-        elem.disabled = elem.value === NO_GUESTS || elem.value > firstField.value;
-        secondField.value = firstField.value;
+        elem.disabled = elem.value === NO_GUESTS || elem.value > roomsNumberField.value;
+        guestsField.value = roomsNumberField.value;
       }
     });
   };
   /**
    * Synchronize rooms and guests quantities on change
-   * @param {Object} evt
    */
-  var onRoomsNumberChange = function (evt) {
-    window.synchronizeFields.synchronizeFields(evt.target, guestsField, syncRoomsOptions);
+  var onRoomsNumberChange = function () {
+    syncRoomsOptions();
   };
 
   roomsNumberField.addEventListener('change', onRoomsNumberChange);
