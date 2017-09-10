@@ -18,12 +18,27 @@ window.map = (function () {
   setAddressValue();
 
   /**
+   * Get three unique adverts
+   * @param {Array} offersData
+   * @return {Array}
+   */
+  var getTreeUniqueAdverts = function (offersData) {
+    var threeUniqueAdverts = [];
+    var offersDataCopy = offersData.slice();
+
+    for (var i = 0; i < 3; i++) {
+      threeUniqueAdverts.push(window.util.getUniqueArrayItem(offersDataCopy));
+    }
+
+    return threeUniqueAdverts;
+  };
+  /**
    * Render server data
    * @param {Array} offersData
    */
   var renderServerData = function (offersData) {
     // render all pins on the map
-    window.pin.renderPins(offersData, tokyoPinMap);
+    window.pin.renderPins(getTreeUniqueAdverts(offersData), tokyoPinMap);
     var pins = tokyoMap.querySelectorAll('.pin');
     // Focus on the first not main pin
     pins[1].focus();
@@ -48,9 +63,19 @@ window.map = (function () {
     // handlers for pins
     tokyoMap.addEventListener('click', onPinClick);
     tokyoMap.addEventListener('keydown', onPinEnterPress);
+
   };
 
-  window.backend.load(renderServerData, window.backend.showError);
+  /**
+   * On success data load handler
+   * @param {Array} offersData
+   */
+  var onSuccess = function (offersData) {
+    renderServerData(offersData);
+    window.filters.activateFilters(offersData);
+  };
+
+  window.backend.load(onSuccess, window.backend.showError);
 
   /**
    * Set new pin position in consideration of limits

@@ -15,10 +15,32 @@ window.backend = (function () {
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onLoad(xhr.response);
-      } else {
-        onError('Неизвестный статус: ' + xhr.status + ' ' + xhr.statusText);
+      var error;
+
+      switch (xhr.status) {
+        case 200:
+          onLoad(xhr.response);
+          break;
+
+        case 400:
+          error = 'Неверный запрос';
+          break;
+        case 401:
+          error = 'Пользователь не авторизован';
+          break;
+        case 404:
+          error = 'Ничего не найдено';
+          break;
+        case 500:
+          error = 'Внутренняя ошибка сервера';
+          break;
+
+        default:
+          error = 'Неизвестный статус: ' + xhr.status + ' ' + xhr.statusText;
+      }
+
+      if (error) {
+        onError(error);
       }
     });
 
