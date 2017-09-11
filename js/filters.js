@@ -24,13 +24,10 @@ window.filters = (function () {
    * @return {Array}
    */
   var getSelectedFeatures = function () {
-    var selectedFeatures = [];
-    Array.prototype.forEach.call(housingFeaturesFilter.querySelectorAll('input[type="checkbox"]'), function (element) {
-      if (element.checked) {
-        selectedFeatures.push(element.value);
-      }
+    var allFeaturesElements = housingFeaturesFilter.querySelectorAll('input[type="checkbox"]:checked');
+    return [].map.call(allFeaturesElements, function (elem) {
+      return elem.value;
     });
-    return selectedFeatures;
   };
 
   /**
