@@ -281,4 +281,49 @@
   submitButton.addEventListener('click', onSubmitButtonClick);
   submitButton.addEventListener('keydown', onSubmitButtonEnterPress);
 
+  // upload user avatar
+  var formHeader = document.querySelector('.notice__header');
+  var avatarChooser = formHeader.querySelector('.upload input[type="file"]');
+  var avatarPreview = formHeader.querySelector('.notice__preview img');
+
+  /**
+   * On avatar chooser change handler
+   * @param {Object} evt
+   */
+  var onAvatarChooserChange = function (evt) {
+    window.upload.onChangeInputFiles(evt, avatarPreview);
+  };
+
+  avatarChooser.addEventListener('change', onAvatarChooserChange);
+
+  var formPhotoContainer = document.querySelector('.form__photo-container');
+  var photoChooser = formPhotoContainer.querySelector('.upload input[type="file"]');
+
+  /**
+   * Return photo image container
+   * @return {Node}
+   */
+  var getImageContainer = function () {
+    var imageContainers = formPhotoContainer.querySelectorAll('.form__photo');
+    var container = Array.prototype.find.call(imageContainers, function (element) {
+      return element.innerHTML === '';
+    });
+
+    if (typeof container === 'undefined') {
+      imageContainers[imageContainers.length - 1].innerHTML = '';
+      container = imageContainers[imageContainers.length - 1];
+    }
+
+    return container.insertAdjacentElement('afterbegin', window.upload.createPhotoImg());
+  };
+
+  /**
+   * On photo chooser change handler
+   * @param {Object} evt
+   */
+  var onPhotoChooserChange = function (evt) {
+    window.upload.onChangeInputFiles(evt, getImageContainer());
+  };
+
+  photoChooser.addEventListener('change', onPhotoChooserChange);
 })();
