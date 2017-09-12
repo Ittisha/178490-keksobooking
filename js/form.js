@@ -30,6 +30,7 @@
     border: '2px solid red',
     boxShadow: 'none'
   };
+  var AVATAR_DEFAULT_SRC = 'img/muffin.png';
 
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
@@ -40,6 +41,15 @@
   var lodgeTypeField = noticeForm.querySelector('#type');
   var priceField = noticeForm.querySelector('#price');
   var submitButton = noticeForm.querySelector('.form__submit');
+
+  // user avatar
+  var formHeader = document.querySelector('.notice__header');
+  var avatarChooser = formHeader.querySelector('.upload input[type="file"]');
+  var avatarPreview = formHeader.querySelector('.notice__preview img');
+
+  // user photos
+  var formPhotoContainer = document.querySelector('.form__photo-container');
+  var photoChooser = formPhotoContainer.querySelector('.upload input[type="file"]');
 
   /**
    *Set custom validity
@@ -247,11 +257,28 @@
   };
 
   /**
+   * Set default avatar src
+   */
+  var setDefaultAvatar = function () {
+    avatarPreview.src = AVATAR_DEFAULT_SRC;
+  };
+  /**
+   * Reset user photos
+   */
+  var resetPhotos = function () {
+    var imageContainers = formPhotoContainer.querySelectorAll('.form__photo');
+    Array.prototype.forEach.call(imageContainers, function (element) {
+      element.innerHTML = '';
+    });
+  };
+  /**
    * Reset form and set address pin value
    */
   var resetForm = function () {
     noticeForm.reset();
     window.map.setAddressValue();
+    setDefaultAvatar();
+    resetPhotos();
   };
   /**
    * Send form if validation passed, reset data after submit
@@ -281,4 +308,41 @@
   submitButton.addEventListener('click', onSubmitButtonClick);
   submitButton.addEventListener('keydown', onSubmitButtonEnterPress);
 
+  /**
+   * On avatar chooser change handler
+   * @param {Object} evt
+   */
+  var onAvatarChooserChange = function (evt) {
+    window.upload.onChangeInputFiles(evt, avatarPreview);
+  };
+
+  avatarChooser.addEventListener('change', onAvatarChooserChange);
+
+  /**
+   * Return photo image container
+   * @return {Node}
+   */
+  var getImageContainer = function () {
+    var imageContainers = formPhotoContainer.querySelectorAll('.form__photo');
+    var container = Array.prototype.find.call(imageContainers, function (element) {
+      return element.innerHTML === '';
+    });
+
+    if (typeof container === 'undefined') {
+      imageContainers[imageContainers.length - 1].innerHTML = '';
+      container = imageContainers[imageContainers.length - 1];
+    }
+
+    return container.insertAdjacentElement('afterbegin', window.upload.createPhotoImg());
+  };
+
+  /**
+   * On photo chooser change handler
+   * @param {Object} evt
+   */
+  var onPhotoChooserChange = function (evt) {
+    window.upload.onChangeInputFiles(evt, getImageContainer());
+  };
+
+  photoChooser.addEventListener('change', onPhotoChooserChange);
 })();
