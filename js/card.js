@@ -7,19 +7,18 @@ window.card = (function () {
     height: 42,
     alt: 'Lodge photo'
   };
-
-  var dialog = document.querySelector('.dialog');
-  var dialogCloseButton = dialog.querySelector('.dialog__close');
-
-  var lodgeTemplate = document.querySelector('#lodge-template');
-  var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
-
   var LODGE_TYPES = {
     flat: 'Квартира',
     bungalo: 'Бунгало',
     house: 'Дом',
     default: 'Не указан'
   };
+
+  var dialog = document.querySelector('.dialog');
+  var dialogCloseButton = dialog.querySelector('.dialog__close');
+
+  var lodgeTemplate = document.querySelector('#lodge-template');
+  var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
 
   /**
    * Fulfill node template with advert data
@@ -81,10 +80,8 @@ window.card = (function () {
 
   /**
    * Close dialog
-   * @param {Object} evt
    */
-  var closeDialog = function (evt) {
-    evt.preventDefault();
+  var closeDialog = function () {
     window.pin.deactivatePin();
 
     dialog.classList.add('hidden');
@@ -96,6 +93,7 @@ window.card = (function () {
    * @param {Object} evt
    */
   var onDialogCloseButtonClick = function (evt) {
+    evt.preventDefault();
     closeDialog(evt);
   };
 

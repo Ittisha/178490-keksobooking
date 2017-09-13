@@ -335,7 +335,6 @@
    * @param {Object} evt
    */
   var onSubmitButtonEnterPress = function (evt) {
-    evt.preventDefault();
     window.util.isEnterEvent(evt, sendForm);
   };
 

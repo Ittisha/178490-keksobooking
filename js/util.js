@@ -56,11 +56,11 @@ window.util = (function () {
    * Do action if Esc pressed
    * @param {Object} evt
    * @param {Function} action
-   * @param {*} param - callback param
    */
-  var isEscEvent = function (evt, action, param) {
+  var isEscEvent = function (evt, action) {
     if (evt.keyCode === KEY_CODES.esc) {
-      action(param);
+      evt.preventDefault();
+      action();
     }
   };
 
@@ -73,6 +73,7 @@ window.util = (function () {
   */
   var isEnterEvent = function (evt, action, param1, param2) {
     if (evt.keyCode === KEY_CODES.enter) {
+      evt.preventDefault();
       action(param1, param2);
     }
   };

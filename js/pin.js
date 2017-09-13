@@ -3,6 +3,15 @@
 // create and render pins
 
 window.pin = (function () {
+  var IMG_WIDTH = 40;
+  var IMG_HEIGHT = 40;
+  var PIN_CLASS_NAME = 'pin';
+  var IMG_CLASS_NAME = 'rounded';
+  var PIN_SIZE = {
+    width: 56,
+    height: 75
+  };
+
   var tokyoMap = document.querySelector('.tokyo__pin-map');
 
   /**
@@ -11,15 +20,6 @@ window.pin = (function () {
    * @return {Element}
    */
   var createPin = function (advert) {
-    var IMG_WIDTH = 40;
-    var IMG_HEIGHT = 40;
-    var PIN_CLASS_NAME = 'pin';
-    var IMG_CLASS_NAME = 'rounded';
-    var PIN_SIZE = {
-      width: 56,
-      height: 75
-    };
-
     var pin = document.createElement('div');
     var img = document.createElement('img');
 
@@ -34,8 +34,10 @@ window.pin = (function () {
     img.height = IMG_HEIGHT;
 
     pin.appendChild(img);
+
     return pin;
   };
+
   /**
    * Render pins in selected element
    * @param {Array} offers
@@ -61,6 +63,7 @@ window.pin = (function () {
       pinActive.classList.remove('pin--active');
     }
   };
+
   /**
    * Make active only selected pin
    * @param {Node} currentPin
@@ -84,6 +87,7 @@ window.pin = (function () {
       }
     });
   };
+
   return {
     renderPins: renderPins,
     deactivatePin: deactivatePin,

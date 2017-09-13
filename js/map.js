@@ -11,8 +11,12 @@ window.map = (function () {
 
   var addressInput = document.getElementById('address');
 
+  /**
+   * Set main pins coords as address input value
+   */
   var setAddressValue = function () {
-    addressInput.value = 'x: ' + Math.floor(mainPin.offsetLeft + halfMainPinWidth) + ', y: ' + (mainPin.offsetTop + mainPinHeight);
+    addressInput.value = 'x: ' + Math.floor(mainPin.offsetLeft + halfMainPinWidth)
+      + ', y: ' + (mainPin.offsetTop + mainPinHeight);
   };
 
   setAddressValue();
@@ -32,6 +36,7 @@ window.map = (function () {
 
     return threeUniqueAdverts;
   };
+
   /**
    * Render server data
    * @param {Array} offersData
@@ -51,6 +56,7 @@ window.map = (function () {
       window.util.isEnterEvent(evt, window.showCard.showCard, evt.target.firstChild, offersData);
       window.pin.makeOnePinActive(evt.target, pins);
     };
+
     /**
      * Activate selected pin on click and render it's lodge card
      * @param {Object} evt
@@ -63,7 +69,6 @@ window.map = (function () {
     // handlers for pins
     tokyoMap.addEventListener('click', onPinClick);
     tokyoMap.addEventListener('keydown', onPinEnterPress);
-
   };
 
   /**
@@ -94,6 +99,7 @@ window.map = (function () {
       mainPin.style[position] = limits.max - pinSize + 'px';
     }
   };
+
   /**
    * Set new location coordinates
    * @param {{x: number, y: number}} coords
@@ -112,7 +118,6 @@ window.map = (function () {
 
     setMainPinPosition(coords.x, MAP.width, halfMainPinWidth, 'left');
     setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
-
   };
 
   /**
@@ -126,6 +131,7 @@ window.map = (function () {
       x: evt.clientX,
       y: evt.clientY
     };
+
     /**
      * @param {Object}moveEvt
      */
@@ -151,6 +157,7 @@ window.map = (function () {
 
       setAddressValue();
     };
+
     /**
      * @param {Object} upEvt
      */
