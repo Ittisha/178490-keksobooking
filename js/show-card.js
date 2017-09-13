@@ -43,7 +43,7 @@ window.showCard = (function () {
       window.card.renderDialogAvatar(offerData);
 
       dialog.classList.remove('hidden');
-      dialogClose.setAttribute('tabindex', '0');
+      dialogClose.tabIndex = 0;
 
       document.addEventListener('keydown', window.card.onDialogEscPress);
     }

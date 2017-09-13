@@ -31,6 +31,7 @@
     boxShadow: 'none'
   };
   var AVATAR_DEFAULT_SRC = 'img/muffin.png';
+  var TITLE_MIN_LENGTH = 30;
 
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
@@ -72,8 +73,8 @@
    * @param {Node} inputNode
    */
   var rewriteTitleValidationMessages = function (inputNode) {
-    var minLength = inputNode.getAttribute('minlength');
-    var maxLength = inputNode.getAttribute('maxlength');
+    var minLength = inputNode.minLength;
+    var maxLength = inputNode.maxLength;
 
     inputNode.setCustomValidity('');
 
@@ -89,7 +90,7 @@
    * @param {Object} evt
    */
   var onTitleFieldInput = function (evt) {
-    var minLength = evt.target.getAttribute('minlength');
+    var minLength = TITLE_MIN_LENGTH;
     var target = evt.target;
 
     if (target.value.length < minLength) {
@@ -103,8 +104,8 @@
    * @param {Node} inputNode
    */
   var rewritePriceValidationMessages = function (inputNode) {
-    var minPrice = inputNode.getAttribute('min');
-    var maxPrice = inputNode.getAttribute('max');
+    var minPrice = inputNode.min;
+    var maxPrice = inputNode.max;
 
     inputNode.setCustomValidity('');
     setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow, PRICE_VALIDITY_MESSAGES.underFlow,

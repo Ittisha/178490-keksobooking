@@ -26,7 +26,7 @@ window.pin = (function () {
     pin.className = PIN_CLASS_NAME;
     pin.style.left = advert.location.x - PIN_SIZE.width / 2 + 'px';
     pin.style.top = advert.location.y - PIN_SIZE.height + 'px';
-    pin.setAttribute('tabindex', '0');
+    pin.tabIndex = 0;
 
     img.className = IMG_CLASS_NAME;
     img.src = advert.author.avatar;
