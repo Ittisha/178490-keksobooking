@@ -279,6 +279,7 @@
         result = false;
       }
     });
+
     return result;
   };
 
@@ -288,13 +289,16 @@
   var setDefaultAvatar = function () {
     avatarPreview.src = AVATAR_DEFAULT_SRC;
   };
+
   /**
    * Reset user photos
    */
   var resetPhotos = function () {
     var imageContainers = formPhotoContainer.querySelectorAll('.form__photo');
     Array.prototype.forEach.call(imageContainers, function (element) {
-      element.innerHTML = '';
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
     });
   };
 
