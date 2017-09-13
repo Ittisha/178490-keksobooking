@@ -5,8 +5,8 @@
     types: ['bungalo', 'flat', 'house', 'palace'],
     minPrice: [0, 1000, 5000, 10000]
   };
-  var HUNDRED_ROOMS_VALUE = '100';
-  var NO_GUESTS = '0';
+  var HUNDRED_ROOMS_VALUE = 100;
+  var NO_GUESTS = 0;
   var TITLE_VALIDITY_MESSAGES = {
     short: {
       firstPart: 'Заголовок должен состоять минимум из ',
@@ -31,7 +31,6 @@
     boxShadow: 'none'
   };
   var AVATAR_DEFAULT_SRC = 'img/muffin.png';
-  var TITLE_MIN_LENGTH = 30;
 
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
@@ -60,7 +59,8 @@
    * @param {string} quantity
    * @param {string} message2
    */
-  var setNewValidationMessage = function (inputNode, booleanCondition, message1, quantity, message2) {
+  var setNewValidationMessage = function (inputNode, booleanCondition, message1,
+      quantity, message2) {
     if (booleanCondition) {
       var messageEnd = typeof message2 !== 'undefined' ? message2 : '';
       var number = typeof quantity !== 'undefined' ? quantity : '';
@@ -78,11 +78,14 @@
 
     inputNode.setCustomValidity('');
 
-    setNewValidationMessage(inputNode, inputNode.validity.tooShort, TITLE_VALIDITY_MESSAGES.short.firstPart, minLength,
+    setNewValidationMessage(inputNode, inputNode.validity.tooShort,
+        TITLE_VALIDITY_MESSAGES.short.firstPart, minLength,
         TITLE_VALIDITY_MESSAGES.short.lastPart);
-    setNewValidationMessage(inputNode, inputNode.validity.tooLong, TITLE_VALIDITY_MESSAGES.long.firstPart, maxLength,
+    setNewValidationMessage(inputNode, inputNode.validity.tooLong,
+        TITLE_VALIDITY_MESSAGES.long.firstPart, maxLength,
         TITLE_VALIDITY_MESSAGES.long.lastPart);
-    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, TITLE_VALIDITY_MESSAGES.missing);
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing,
+        TITLE_VALIDITY_MESSAGES.missing);
   };
 
   /**
@@ -90,15 +93,18 @@
    * @param {Object} evt
    */
   var onTitleFieldInput = function (evt) {
-    var minLength = TITLE_MIN_LENGTH;
+    // Edge doesn't support minlength, we can't get it with object notation
+    var minLength = evt.target.getAttribute('minlength');
     var target = evt.target;
 
+    target.setCustomValidity('');
+
     if (target.value.length < minLength) {
-      target.setCustomValidity(TITLE_VALIDITY_MESSAGES.short.firstPart + minLength + TITLE_VALIDITY_MESSAGES.short.lastPart);
-    } else {
-      target.setCustomValidity('');
+      target.setCustomValidity(TITLE_VALIDITY_MESSAGES.short.firstPart + minLength
+        + TITLE_VALIDITY_MESSAGES.short.lastPart);
     }
   };
+
   /**
    * Rewrite price validation messages in russian
    * @param {Node} inputNode
@@ -108,12 +114,16 @@
     var maxPrice = inputNode.max;
 
     inputNode.setCustomValidity('');
-    setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow, PRICE_VALIDITY_MESSAGES.underFlow,
+    setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow,
+        PRICE_VALIDITY_MESSAGES.underFlow,
         (+minPrice).toLocaleString('ru'));
-    setNewValidationMessage(inputNode, inputNode.validity.rangeOverflow, PRICE_VALIDITY_MESSAGES.overFlow,
+    setNewValidationMessage(inputNode, inputNode.validity.rangeOverflow,
+        PRICE_VALIDITY_MESSAGES.overFlow,
         (+maxPrice).toLocaleString('ru'));
-    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, PRICE_VALIDITY_MESSAGES.missing);
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing,
+        PRICE_VALIDITY_MESSAGES.missing);
   };
+
   /**
    * Call callback-function if input invalid
    * @param {Node} inputNode
@@ -130,12 +140,14 @@
   var onTitleFieldInvalid = function () {
     setInputCustomValidity(titleField, rewriteTitleValidationMessages);
   };
+
   /**
    * Call new validation messages if price field invalid
    */
   var onPriceFieldInvalid = function () {
     setInputCustomValidity(priceField, rewritePriceValidationMessages);
   };
+
   /**
    * Call new validation messages on price field input
    */
@@ -156,6 +168,7 @@
   var syncValues = function (element, value) {
     element.value = value;
   };
+
   /**
    * Get real array of options values from HTMLOptionsCollection
    * @param {Node} selectNode
@@ -168,6 +181,7 @@
     });
     return optionsArray;
   };
+
   /**
    * Bind time in and time out changes
    * @param {Object} evt
@@ -177,7 +191,8 @@
     var targetFieldData = getOptionsArray(evt.target);
     var anotherFieldData = getOptionsArray(anotherTimeField);
 
-    window.synchronizeFields.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
+    window.synchronizeFields.synchronizeFields(evt.target, anotherTimeField,
+        syncValues, targetFieldData, anotherFieldData);
   };
 
   timeInField.addEventListener('change', onTimeInTimeOutChange);
@@ -197,7 +212,8 @@
    * @param {Object} evt
    */
   var onLodgeTypeFieldChange = function (evt) {
-    window.synchronizeFields.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
+    window.synchronizeFields.synchronizeFields(evt.target, priceField,
+        syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
   };
 
   lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
@@ -206,16 +222,24 @@
    * Bind rooms and guests quantities
    */
   var syncRoomsOptions = function () {
-    Array.prototype.forEach.call(guestsField.options, function (elem) {
-      if (roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
-        elem.disabled = elem.value !== NO_GUESTS;
-        guestsField.value = NO_GUESTS;
-      } else {
-        elem.disabled = elem.value === NO_GUESTS || elem.value > roomsNumberField.value;
-        guestsField.value = roomsNumberField.value;
-      }
-    });
+    if (+roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
+      // set guests field value
+      guestsField.value = NO_GUESTS;
+      // set guests field options disabled property
+      Array.prototype.forEach.call(guestsField.options, function (elem) {
+        elem.disabled = +elem.value !== NO_GUESTS;
+      });
+    } else {
+      // set guests field value
+      guestsField.value = roomsNumberField.value;
+      // set guests field options disabled property
+      Array.prototype.forEach.call(guestsField.options, function (elem) {
+        elem.disabled = +elem.value === NO_GUESTS ||
+          +elem.value > +roomsNumberField.value;
+      });
+    }
   };
+
   /**
    * Synchronize rooms and guests quantities on change
    */
@@ -234,6 +258,7 @@
     node.style.border = styles.border;
     node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
   };
+
   /**
    * Check form validation
    * @return {boolean}
@@ -272,6 +297,7 @@
       element.innerHTML = '';
     });
   };
+
   /**
    * Reset form and set address pin value
    */
@@ -281,6 +307,7 @@
     setDefaultAvatar();
     resetPhotos();
   };
+
   /**
    * Send form if validation passed, reset data after submit
    */
@@ -289,6 +316,7 @@
       window.backend.save(new FormData(noticeForm), resetForm, window.backend.showError);
     }
   };
+
   /**
    * Send form on submit button click
    * @param {Object} evt
@@ -297,6 +325,7 @@
     evt.preventDefault();
     sendForm();
   };
+
   /**
    * Send form on submit button Enter press
    * @param {Object} evt
