@@ -72,8 +72,10 @@ window.card = (function () {
   };
   /**
    * Close dialog
+   * @param {Object} evt
    */
-  var closeDialog = function () {
+  var closeDialog = function (evt) {
+    evt.preventDefault();
     window.pin.deactivatePin();
 
     dialog.classList.add('hidden');
@@ -81,23 +83,24 @@ window.card = (function () {
   };
   /**
    * Close dialog and deactivate pin on click
+   * @param {Object} evt
    */
-  var onDialogCloseClick = function () {
-    closeDialog();
+  var onDialogCloseClick = function (evt) {
+    closeDialog(evt);
   };
   /**
    * Close dialog and deactivate pin on Esc keydown
    * @param {Object} evt
    */
   var onDialogEscPress = function (evt) {
-    window.util.isEscEvent(evt, closeDialog);
+    window.util.isEscEvent(evt, closeDialog, evt);
   };
   /**
    * Close dialog and deactivate pin on ENTER keydown
    * @param {Object} evt
    */
   var onDialogCloseEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, closeDialog);
+    window.util.isEnterEvent(evt, closeDialog, evt);
   };
 
   // handlers for dialog-close element

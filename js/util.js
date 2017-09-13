@@ -53,16 +53,17 @@ window.util = (function () {
    * Do action if Esc pressed
    * @param {Object} evt
    * @param {Function} action
+   * @param {*} param - callback param
    */
-  var isEscEvent = function (evt, action) {
+  var isEscEvent = function (evt, action, param) {
     if (evt.keyCode === KEY_CODES.esc) {
-      action();
+      action(param);
     }
   };
   /**
    * Do action if Enter pressed
-  * @param {Object} evt
-  * @param {Function} action
+   * @param {Object} evt
+   * @param {Function} action
    * @param {*} param1 - callback param
    * @param {*} param2 - callback param
   */
