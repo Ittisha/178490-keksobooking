@@ -17,6 +17,7 @@ window.util = (function () {
   var getRandomInteger = function (min, max) {
     return Math.floor(Math.random() * (max + 1 - min) + min);
   };
+
   /**
    * Returns random array item
    * @param {Array} array
@@ -25,6 +26,7 @@ window.util = (function () {
   var getRandomArrayItem = function (array) {
     return array[getRandomInteger(0, array.length - 1)];
   };
+
   /**
    * Returns unique random array item
    * @param {Array} array
@@ -33,6 +35,7 @@ window.util = (function () {
   var getUniqueArrayItem = function (array) {
     return array.splice(getRandomInteger(0, array.length - 1), 1)[0];
   };
+
   /**
    * Returns array of random length with unique elements from initial array
    * @param {Array} array
@@ -60,6 +63,7 @@ window.util = (function () {
       action(param);
     }
   };
+
   /**
    * Do action if Enter pressed
    * @param {Object} evt

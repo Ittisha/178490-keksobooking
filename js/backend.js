@@ -7,7 +7,8 @@ window.backend = (function () {
   var CLOSE_IMG = {
     width: 22,
     height: 22,
-    src: 'img/close.svg'
+    src: 'img/close.svg',
+    alt: 'close'
   };
 
   /**
@@ -100,7 +101,7 @@ window.backend = (function () {
     containerClose.classList.add('error-message__close');
 
     var closeImg = document.createElement('img');
-    closeImg.alt = 'close';
+    closeImg.alt = CLOSE_IMG.alt;
     closeImg.width = CLOSE_IMG.width;
     closeImg.height = CLOSE_IMG.height;
     closeImg.src = CLOSE_IMG.src;
