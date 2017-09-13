@@ -5,6 +5,8 @@
     types: ['bungalo', 'flat', 'house', 'palace'],
     minPrice: [0, 1000, 5000, 10000]
   };
+  var DEFAULT_MIN_PRICE = 1000;
+  var DEFAULT_GUESTS_NUMBER = 1;
   var HUNDRED_ROOMS_VALUE = 100;
   var NO_GUESTS = 0;
   var TITLE_VALIDITY_MESSAGES = {
@@ -32,6 +34,7 @@
   };
   var AVATAR_DEFAULT_SRC = 'img/muffin.png';
 
+  // form and fields
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
   var timeOutField = noticeForm.querySelector('#timeout');
@@ -134,6 +137,7 @@
       callback(inputNode);
     }
   };
+
   /**
    * Call new validation messages if title field invalid
    */
@@ -225,6 +229,7 @@
     if (+roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
       // set guests field value
       guestsField.value = NO_GUESTS;
+
       // set guests field options disabled property
       Array.prototype.forEach.call(guestsField.options, function (elem) {
         elem.disabled = +elem.value !== NO_GUESTS;
@@ -232,6 +237,7 @@
     } else {
       // set guests field value
       guestsField.value = roomsNumberField.value;
+
       // set guests field options disabled property
       Array.prototype.forEach.call(guestsField.options, function (elem) {
         elem.disabled = +elem.value === NO_GUESTS ||
@@ -250,13 +256,15 @@
   roomsNumberField.addEventListener('change', onRoomsNumberChange);
 
   /**
-   * Change border and box shadow styles
+   * Change border and box shadow styles excluding features elements
    * @param {Node} node
    * @param {Object} styles
    */
   var changeBorderStyle = function (node, styles) {
-    node.style.border = styles.border;
-    node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+    if (node.name !== 'features') {
+      node.style.border = styles.border;
+      node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+    }
   };
 
   /**
@@ -303,11 +311,31 @@
   };
 
   /**
-   * Reset form and set address pin value
+   * Set default min price
+   */
+  var setDefaultMinPrice = function () {
+    priceField.min = DEFAULT_MIN_PRICE;
+  };
+
+  /**
+   * Reset guests field options disabled property
+   */
+  var resetGuestsFieldOptions = function () {
+    Array.prototype.forEach.call(guestsField.options, function (element) {
+      element.disabled = +element.value !== DEFAULT_GUESTS_NUMBER;
+    });
+  };
+
+  /**
+   * Reset form
    */
   var resetForm = function () {
     noticeForm.reset();
     window.map.setAddressValue();
+
+    setDefaultMinPrice();
+    resetGuestsFieldOptions();
+
     setDefaultAvatar();
     resetPhotos();
   };
@@ -317,7 +345,8 @@
    */
   var sendForm = function () {
     if (checkValidationSubmit()) {
-      window.backend.save(new FormData(noticeForm), resetForm, window.backend.showError);
+      window.backend.save(new FormData(noticeForm), resetForm,
+          window.backend.showError);
     }
   };
 
