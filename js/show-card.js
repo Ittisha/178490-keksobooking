@@ -44,6 +44,10 @@ window.showCard = (function () {
       dialog.classList.remove('hidden');
       dialogCloseButton.tabIndex = 0;
 
+      // handlers for dialog-close element
+      dialogCloseButton.addEventListener('click', window.card.onDialogCloseButtonClick);
+      dialogCloseButton.addEventListener('keydown', window.card.onDialogCloseButtonEnterPress);
+
       document.addEventListener('keydown', window.card.onDialogEscPress);
     }
   };

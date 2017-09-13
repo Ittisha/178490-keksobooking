@@ -19,37 +19,12 @@ window.util = (function () {
   };
 
   /**
-   * Returns random array item
-   * @param {Array} array
-   * @return {*}
-   */
-  var getRandomArrayItem = function (array) {
-    return array[getRandomInteger(0, array.length - 1)];
-  };
-
-  /**
    * Returns unique random array item
    * @param {Array} array
    * @return {*}
    */
   var getUniqueArrayItem = function (array) {
     return array.splice(getRandomInteger(0, array.length - 1), 1)[0];
-  };
-
-  /**
-   * Returns array of random length with unique elements from initial array
-   * @param {Array} array
-   * @return {Array}
-   */
-  var getArrayOfRandomLength = function (array) {
-    var arrayCopy = array.slice(0);
-    var newArray = [];
-    var newArrayLength = getRandomInteger(1, array.length);
-
-    for (var i = 0; i < newArrayLength; i++) {
-      newArray.push(getUniqueArrayItem(arrayCopy));
-    }
-    return newArray;
   };
 
   /**
@@ -79,10 +54,7 @@ window.util = (function () {
   };
 
   return {
-    getRandomInteger: getRandomInteger,
-    getRandomArrayItem: getRandomArrayItem,
     getUniqueArrayItem: getUniqueArrayItem,
-    getArrayOfRandomLength: getArrayOfRandomLength,
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent
   };

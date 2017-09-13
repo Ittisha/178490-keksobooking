@@ -86,6 +86,9 @@ window.card = (function () {
 
     dialog.classList.add('hidden');
     document.removeEventListener('keydown', onDialogEscPress);
+
+    dialogCloseButton.removeEventListener('click', onDialogCloseButtonClick);
+    dialogCloseButton.removeEventListener('keydown', onDialogCloseButtonEnterPress);
   };
 
   /**
@@ -102,7 +105,7 @@ window.card = (function () {
    * @param {Object} evt
    */
   var onDialogEscPress = function (evt) {
-    window.util.isEscEvent(evt, closeDialog, evt);
+    window.util.isEscEvent(evt, closeDialog);
   };
 
   /**
@@ -110,20 +113,16 @@ window.card = (function () {
    * @param {Object} evt
    */
   var onDialogCloseButtonEnterPress = function (evt) {
-    window.util.isEnterEvent(evt, closeDialog, evt);
+    window.util.isEnterEvent(evt, closeDialog);
   };
-
-  // handlers for dialog-close element
-  dialogCloseButton.addEventListener('click', onDialogCloseButtonClick);
-  dialogCloseButton.addEventListener('keydown', onDialogCloseButtonEnterPress);
-
-  document.addEventListener('keydown', onDialogEscPress);
 
   return {
     createLodgeCard: createLodgeCard,
     renderLodgeCard: renderLodgeCard,
     renderDialogAvatar: renderDialogAvatar,
     onDialogEscPress: onDialogEscPress,
-    closeDialog: closeDialog
+    closeDialog: closeDialog,
+    onDialogCloseButtonClick: onDialogCloseButtonClick,
+    onDialogCloseButtonEnterPress: onDialogCloseButtonEnterPress
   };
 })();

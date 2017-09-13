@@ -26,7 +26,7 @@ window.map = (function () {
    * @param {Array} offersData
    * @return {Array}
    */
-  var getTreeUniqueAdverts = function (offersData) {
+  var getThreeUniqueAdverts = function (offersData) {
     var threeUniqueAdverts = [];
     var offersDataCopy = offersData.slice();
 
@@ -43,7 +43,7 @@ window.map = (function () {
    */
   var renderServerData = function (offersData) {
     // render all pins on the map
-    window.pin.renderPins(getTreeUniqueAdverts(offersData), tokyoPinMap);
+    window.pin.renderPins(getThreeUniqueAdverts(offersData), tokyoPinMap);
     var pins = tokyoMap.querySelectorAll('.pin');
     // Focus on the first not main pin
     pins[1].focus();
@@ -105,7 +105,7 @@ window.map = (function () {
    * @param {{x: number, y: number}} coords
    */
   var setLocationCoords = function (coords) {
-    var MAP = {
+    var map = {
       width: {
         min: 0,
         max: mapForPinDrag.offsetWidth
@@ -116,8 +116,8 @@ window.map = (function () {
       }
     };
 
-    setMainPinPosition(coords.x, MAP.width, halfMainPinWidth, 'left');
-    setMainPinPosition(coords.y, MAP.height, mainPinHeight, 'top');
+    setMainPinPosition(coords.x, map.width, halfMainPinWidth, 'left');
+    setMainPinPosition(coords.y, map.height, mainPinHeight, 'top');
   };
 
   /**
