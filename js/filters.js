@@ -56,6 +56,7 @@ window.filters = (function () {
     }
     return 'middle';
   };
+
   /**
    * Check if filter value is equal to advert value
    * @param {string} filterValue
@@ -65,6 +66,7 @@ window.filters = (function () {
   var isRequiredAdvert = function (filterValue, advertValue) {
     return filterValue === 'any' ? true : filterValue === advertValue;
   };
+
   /**
    * Returns filtered adverts array
    * @param {Array} data
@@ -93,30 +95,35 @@ window.filters = (function () {
       window.pin.deletePins();
       window.pin.renderPins(getFilteredAdverts(data), tokyoPinMap);
     };
+
     /**
      * On type filter change handler
      */
     var onTypeFilterChange = function () {
       window.debounce.debounce(renderFilteredPins);
     };
+
     /**
      * On rooms filter change handler
      */
     var onRoomsFilterChange = function () {
       window.debounce.debounce(renderFilteredPins);
     };
+
     /**
      * On guests filter change handler
      */
     var onGuestsFilterChange = function () {
       window.debounce.debounce(renderFilteredPins);
     };
+
     /**
      * On price filter change handler
      */
     var onPriceFilterChange = function () {
       window.debounce.debounce(renderFilteredPins);
     };
+
     /**
      * On features filter change handler
      * @param {Object} evt

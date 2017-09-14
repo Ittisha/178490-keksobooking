@@ -6,6 +6,10 @@ window.upload = (function () {
     'jpg',
     'jpeg',
     'png'];
+  var PHOTO_SIZE = {
+    width: 70,
+    height: 70
+  };
 
   /**
    * Show preview image
@@ -45,8 +49,8 @@ window.upload = (function () {
   var createPhotoImg = function () {
     var imgElement = document.createElement('img');
     imgElement.classList.add('form__photo-image');
-    imgElement.width = '70';
-    imgElement.height = '70';
+    imgElement.width = PHOTO_SIZE.width;
+    imgElement.height = PHOTO_SIZE.height;
     return imgElement;
   };
 

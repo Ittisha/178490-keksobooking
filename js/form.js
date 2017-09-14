@@ -5,8 +5,10 @@
     types: ['bungalo', 'flat', 'house', 'palace'],
     minPrice: [0, 1000, 5000, 10000]
   };
-  var HUNDRED_ROOMS_VALUE = '100';
-  var NO_GUESTS = '0';
+  var DEFAULT_MIN_PRICE = 1000;
+  var DEFAULT_GUESTS_NUMBER = 1;
+  var HUNDRED_ROOMS_VALUE = 100;
+  var NO_GUESTS = 0;
   var TITLE_VALIDITY_MESSAGES = {
     short: {
       firstPart: 'Заголовок должен состоять минимум из ',
@@ -32,6 +34,7 @@
   };
   var AVATAR_DEFAULT_SRC = 'img/muffin.png';
 
+  // form and fields
   var noticeForm = document.querySelector('.notice__form');
   var timeInField = noticeForm.querySelector('#timein');
   var timeOutField = noticeForm.querySelector('#timeout');
@@ -59,7 +62,8 @@
    * @param {string} quantity
    * @param {string} message2
    */
-  var setNewValidationMessage = function (inputNode, booleanCondition, message1, quantity, message2) {
+  var setNewValidationMessage = function (inputNode, booleanCondition, message1,
+      quantity, message2) {
     if (booleanCondition) {
       var messageEnd = typeof message2 !== 'undefined' ? message2 : '';
       var number = typeof quantity !== 'undefined' ? quantity : '';
@@ -72,16 +76,19 @@
    * @param {Node} inputNode
    */
   var rewriteTitleValidationMessages = function (inputNode) {
-    var minLength = inputNode.getAttribute('minlength');
-    var maxLength = inputNode.getAttribute('maxlength');
+    var minLength = inputNode.minLength;
+    var maxLength = inputNode.maxLength;
 
     inputNode.setCustomValidity('');
 
-    setNewValidationMessage(inputNode, inputNode.validity.tooShort, TITLE_VALIDITY_MESSAGES.short.firstPart, minLength,
+    setNewValidationMessage(inputNode, inputNode.validity.tooShort,
+        TITLE_VALIDITY_MESSAGES.short.firstPart, minLength,
         TITLE_VALIDITY_MESSAGES.short.lastPart);
-    setNewValidationMessage(inputNode, inputNode.validity.tooLong, TITLE_VALIDITY_MESSAGES.long.firstPart, maxLength,
+    setNewValidationMessage(inputNode, inputNode.validity.tooLong,
+        TITLE_VALIDITY_MESSAGES.long.firstPart, maxLength,
         TITLE_VALIDITY_MESSAGES.long.lastPart);
-    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, TITLE_VALIDITY_MESSAGES.missing);
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing,
+        TITLE_VALIDITY_MESSAGES.missing);
   };
 
   /**
@@ -89,30 +96,37 @@
    * @param {Object} evt
    */
   var onTitleFieldInput = function (evt) {
+    // Edge doesn't support minlength, we can't get it with object notation
     var minLength = evt.target.getAttribute('minlength');
     var target = evt.target;
 
+    target.setCustomValidity('');
+
     if (target.value.length < minLength) {
-      target.setCustomValidity(TITLE_VALIDITY_MESSAGES.short.firstPart + minLength + TITLE_VALIDITY_MESSAGES.short.lastPart);
-    } else {
-      target.setCustomValidity('');
+      target.setCustomValidity(TITLE_VALIDITY_MESSAGES.short.firstPart + minLength
+        + TITLE_VALIDITY_MESSAGES.short.lastPart);
     }
   };
+
   /**
    * Rewrite price validation messages in russian
    * @param {Node} inputNode
    */
   var rewritePriceValidationMessages = function (inputNode) {
-    var minPrice = inputNode.getAttribute('min');
-    var maxPrice = inputNode.getAttribute('max');
+    var minPrice = inputNode.min;
+    var maxPrice = inputNode.max;
 
     inputNode.setCustomValidity('');
-    setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow, PRICE_VALIDITY_MESSAGES.underFlow,
+    setNewValidationMessage(inputNode, inputNode.validity.rangeUnderflow,
+        PRICE_VALIDITY_MESSAGES.underFlow,
         (+minPrice).toLocaleString('ru'));
-    setNewValidationMessage(inputNode, inputNode.validity.rangeOverflow, PRICE_VALIDITY_MESSAGES.overFlow,
+    setNewValidationMessage(inputNode, inputNode.validity.rangeOverflow,
+        PRICE_VALIDITY_MESSAGES.overFlow,
         (+maxPrice).toLocaleString('ru'));
-    setNewValidationMessage(inputNode, inputNode.validity.valueMissing, PRICE_VALIDITY_MESSAGES.missing);
+    setNewValidationMessage(inputNode, inputNode.validity.valueMissing,
+        PRICE_VALIDITY_MESSAGES.missing);
   };
+
   /**
    * Call callback-function if input invalid
    * @param {Node} inputNode
@@ -123,18 +137,21 @@
       callback(inputNode);
     }
   };
+
   /**
    * Call new validation messages if title field invalid
    */
   var onTitleFieldInvalid = function () {
     setInputCustomValidity(titleField, rewriteTitleValidationMessages);
   };
+
   /**
    * Call new validation messages if price field invalid
    */
   var onPriceFieldInvalid = function () {
     setInputCustomValidity(priceField, rewritePriceValidationMessages);
   };
+
   /**
    * Call new validation messages on price field input
    */
@@ -155,6 +172,7 @@
   var syncValues = function (element, value) {
     element.value = value;
   };
+
   /**
    * Get real array of options values from HTMLOptionsCollection
    * @param {Node} selectNode
@@ -167,6 +185,7 @@
     });
     return optionsArray;
   };
+
   /**
    * Bind time in and time out changes
    * @param {Object} evt
@@ -176,7 +195,8 @@
     var targetFieldData = getOptionsArray(evt.target);
     var anotherFieldData = getOptionsArray(anotherTimeField);
 
-    window.synchronizeFields.synchronizeFields(evt.target, anotherTimeField, syncValues, targetFieldData, anotherFieldData);
+    window.synchronizeFields.synchronizeFields(evt.target, anotherTimeField,
+        syncValues, targetFieldData, anotherFieldData);
   };
 
   timeInField.addEventListener('change', onTimeInTimeOutChange);
@@ -196,7 +216,8 @@
    * @param {Object} evt
    */
   var onLodgeTypeFieldChange = function (evt) {
-    window.synchronizeFields.synchronizeFields(evt.target, priceField, syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
+    window.synchronizeFields.synchronizeFields(evt.target, priceField,
+        syncValueWithMin, TYPES_MIN_PRICES.types, TYPES_MIN_PRICES.minPrice);
   };
 
   lodgeTypeField.addEventListener('change', onLodgeTypeFieldChange);
@@ -205,16 +226,26 @@
    * Bind rooms and guests quantities
    */
   var syncRoomsOptions = function () {
-    Array.prototype.forEach.call(guestsField.options, function (elem) {
-      if (roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
-        elem.disabled = elem.value !== NO_GUESTS;
-        guestsField.value = NO_GUESTS;
-      } else {
-        elem.disabled = elem.value === NO_GUESTS || elem.value > roomsNumberField.value;
-        guestsField.value = roomsNumberField.value;
-      }
-    });
+    if (+roomsNumberField.value === HUNDRED_ROOMS_VALUE) {
+      // set guests field value
+      guestsField.value = NO_GUESTS;
+
+      // set guests field options disabled property
+      Array.prototype.forEach.call(guestsField.options, function (elem) {
+        elem.disabled = +elem.value !== NO_GUESTS;
+      });
+    } else {
+      // set guests field value
+      guestsField.value = roomsNumberField.value;
+
+      // set guests field options disabled property
+      Array.prototype.forEach.call(guestsField.options, function (elem) {
+        elem.disabled = +elem.value === NO_GUESTS ||
+          +elem.value > +roomsNumberField.value;
+      });
+    }
   };
+
   /**
    * Synchronize rooms and guests quantities on change
    */
@@ -225,14 +256,17 @@
   roomsNumberField.addEventListener('change', onRoomsNumberChange);
 
   /**
-   * Change border and box shadow styles
+   * Change border and box shadow styles excluding features elements
    * @param {Node} node
    * @param {Object} styles
    */
   var changeBorderStyle = function (node, styles) {
-    node.style.border = styles.border;
-    node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+    if (node.name !== 'features') {
+      node.style.border = styles.border;
+      node.style.boxShadow = 'boxShadow' in styles ? styles.boxShadow : 'none';
+    }
   };
+
   /**
    * Check form validation
    * @return {boolean}
@@ -253,6 +287,7 @@
         result = false;
       }
     });
+
     return result;
   };
 
@@ -262,32 +297,59 @@
   var setDefaultAvatar = function () {
     avatarPreview.src = AVATAR_DEFAULT_SRC;
   };
+
   /**
    * Reset user photos
    */
   var resetPhotos = function () {
     var imageContainers = formPhotoContainer.querySelectorAll('.form__photo');
     Array.prototype.forEach.call(imageContainers, function (element) {
-      element.innerHTML = '';
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
     });
   };
+
   /**
-   * Reset form and set address pin value
+   * Set default min price
+   */
+  var setDefaultMinPrice = function () {
+    priceField.min = DEFAULT_MIN_PRICE;
+  };
+
+  /**
+   * Reset guests field options disabled property
+   */
+  var resetGuestsFieldOptions = function () {
+    Array.prototype.forEach.call(guestsField.options, function (element) {
+      element.disabled = +element.value !== DEFAULT_GUESTS_NUMBER;
+    });
+  };
+
+  /**
+   * Reset form
    */
   var resetForm = function () {
     noticeForm.reset();
     window.map.setAddressValue();
+
+    setDefaultMinPrice();
+    resetGuestsFieldOptions();
+
     setDefaultAvatar();
     resetPhotos();
   };
+
   /**
    * Send form if validation passed, reset data after submit
    */
   var sendForm = function () {
     if (checkValidationSubmit()) {
-      window.backend.save(new FormData(noticeForm), resetForm, window.backend.showError);
+      window.backend.save(new FormData(noticeForm), resetForm,
+          window.backend.showError);
     }
   };
+
   /**
    * Send form on submit button click
    * @param {Object} evt
@@ -296,12 +358,12 @@
     evt.preventDefault();
     sendForm();
   };
+
   /**
    * Send form on submit button Enter press
    * @param {Object} evt
    */
   var onSubmitButtonEnterPress = function (evt) {
-    evt.preventDefault();
     window.util.isEnterEvent(evt, sendForm);
   };
 

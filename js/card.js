@@ -2,18 +2,23 @@
 
 // create and render lodge offer card and user avatar
 window.card = (function () {
-  var dialog = document.querySelector('.dialog');
-  var dialogClose = dialog.querySelector('.dialog__close');
-
-  var lodgeTemplate = document.querySelector('#lodge-template');
-  var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
-
+  var LODGE_PHOTO = {
+    width: 52,
+    height: 42,
+    alt: 'Lodge photo'
+  };
   var LODGE_TYPES = {
     flat: 'Квартира',
     bungalo: 'Бунгало',
     house: 'Дом',
     default: 'Не указан'
   };
+
+  var dialog = document.querySelector('.dialog');
+  var dialogCloseButton = dialog.querySelector('.dialog__close');
+
+  var lodgeTemplate = document.querySelector('#lodge-template');
+  var lodgeTemplateContent = lodgeTemplate.content ? lodgeTemplate.content : lodgeTemplate;
 
   /**
    * Fulfill node template with advert data
@@ -43,16 +48,17 @@ window.card = (function () {
     if (advert.offer.photos.length) {
       advert.offer.photos.forEach(function (element) {
         var img = document.createElement('img');
-        img.setAttribute('src', element);
-        img.setAttribute('width', '52px');
-        img.setAttribute('height', '42px');
-        img.setAttribute('alt', 'Lodge photo');
+        img.src = element;
+        img.width = LODGE_PHOTO.width;
+        img.height = LODGE_PHOTO.height;
+        img.alt = LODGE_PHOTO.alt;
         lodgeCard.querySelector('.lodge__photos').appendChild(img);
       });
     }
 
     return lodgeCard;
   };
+
   /**
    * Render lodge card on dialog-panel
    * @param {Node} filledTemplate
@@ -63,6 +69,7 @@ window.card = (function () {
     fragment.appendChild(filledTemplate);
     dialog.replaceChild(fragment, oldChild);
   };
+
   /**
    * Render lodge owner avatar
    * @param {Object} advert
@@ -70,6 +77,7 @@ window.card = (function () {
   var renderDialogAvatar = function (advert) {
     dialog.querySelector('.dialog__title img').src = advert.author.avatar;
   };
+
   /**
    * Close dialog
    */
@@ -78,13 +86,20 @@ window.card = (function () {
 
     dialog.classList.add('hidden');
     document.removeEventListener('keydown', onDialogEscPress);
+
+    dialogCloseButton.removeEventListener('click', onDialogCloseButtonClick);
+    dialogCloseButton.removeEventListener('keydown', onDialogCloseButtonEnterPress);
   };
+
   /**
    * Close dialog and deactivate pin on click
+   * @param {Object} evt
    */
-  var onDialogCloseClick = function () {
-    closeDialog();
+  var onDialogCloseButtonClick = function (evt) {
+    evt.preventDefault();
+    closeDialog(evt);
   };
+
   /**
    * Close dialog and deactivate pin on Esc keydown
    * @param {Object} evt
@@ -92,25 +107,22 @@ window.card = (function () {
   var onDialogEscPress = function (evt) {
     window.util.isEscEvent(evt, closeDialog);
   };
+
   /**
    * Close dialog and deactivate pin on ENTER keydown
    * @param {Object} evt
    */
-  var onDialogCloseEnterPress = function (evt) {
+  var onDialogCloseButtonEnterPress = function (evt) {
     window.util.isEnterEvent(evt, closeDialog);
   };
-
-  // handlers for dialog-close element
-  dialogClose.addEventListener('click', onDialogCloseClick);
-  dialogClose.addEventListener('keydown', onDialogCloseEnterPress);
-
-  document.addEventListener('keydown', onDialogEscPress);
 
   return {
     createLodgeCard: createLodgeCard,
     renderLodgeCard: renderLodgeCard,
     renderDialogAvatar: renderDialogAvatar,
     onDialogEscPress: onDialogEscPress,
-    closeDialog: closeDialog
+    closeDialog: closeDialog,
+    onDialogCloseButtonClick: onDialogCloseButtonClick,
+    onDialogCloseButtonEnterPress: onDialogCloseButtonEnterPress
   };
 })();

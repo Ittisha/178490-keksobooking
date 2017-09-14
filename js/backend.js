@@ -3,6 +3,13 @@
 window.backend = (function () {
   var SERVER_URL = 'https://1510.dump.academy/keksobooking';
   var DATA_URL_ENDING = '/data';
+  var REQUEST_TIMEOUT = 10000;
+  var CLOSE_IMG = {
+    width: 22,
+    height: 22,
+    src: 'img/close.svg',
+    alt: 'close'
+  };
 
   /**
    *Set up new xhr options
@@ -52,10 +59,11 @@ window.backend = (function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 10000;
+    xhr.timeout = REQUEST_TIMEOUT;
 
     return xhr;
   };
+
   /**
    * Get data from server
    * @param {Function} onLoad
@@ -66,6 +74,7 @@ window.backend = (function () {
     xhr.open('GET', SERVER_URL + DATA_URL_ENDING);
     xhr.send();
   };
+
   /**
    * Post data to server
    * @param {Object} data
@@ -77,6 +86,7 @@ window.backend = (function () {
     xhr.open('POST', SERVER_URL);
     xhr.send(data);
   };
+
   /**
    * Show error in new div
    * @param {string} errorMessage
@@ -87,14 +97,14 @@ window.backend = (function () {
     errorContainer.textContent = errorMessage;
 
     var containerClose = document.createElement('a');
-    containerClose.setAttribute('href', '#');
+    containerClose.href = '#';
     containerClose.classList.add('error-message__close');
 
     var closeImg = document.createElement('img');
-    closeImg.setAttribute('alt', 'close');
-    closeImg.setAttribute('width', '22');
-    closeImg.setAttribute('height', '22');
-    closeImg.setAttribute('src', 'img/close.svg');
+    closeImg.alt = CLOSE_IMG.alt;
+    closeImg.width = CLOSE_IMG.width;
+    closeImg.height = CLOSE_IMG.height;
+    closeImg.src = CLOSE_IMG.src;
 
     containerClose.appendChild(closeImg);
     errorContainer.appendChild(containerClose);
@@ -111,13 +121,15 @@ window.backend = (function () {
     var onContainerCloseButtonClick = function (evt) {
       closeErrorContainer(evt);
     };
+
     var onContainerCloseButtonEnterPress = function (evt) {
-      window.util.isEnterEvent(evt, closeErrorContainer);
+      window.util.isEnterEvent(evt, closeErrorContainer, evt);
     };
 
     containerClose.addEventListener('click', onContainerCloseButtonClick);
     containerClose.addEventListener('keydown', onContainerCloseButtonEnterPress);
   };
+
   return {
     load: load,
     save: save,
