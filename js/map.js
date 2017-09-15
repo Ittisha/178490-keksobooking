@@ -1,6 +1,7 @@
 'use strict';
 
 window.map = (function () {
+  var ADVERTS_DEFAULT_NUMBER = 3;
   var tokyoPinMap = 'tokyo__pin-map';
   var tokyoMap = document.querySelector('.tokyo__pin-map');
   var mainPin = tokyoMap.querySelector('.pin__main');
@@ -9,7 +10,7 @@ window.map = (function () {
   var halfMainPinWidth = mainPin.offsetWidth / 2;
   var mainPinHeight = mainPin.offsetHeight;
 
-  var addressInput = document.getElementById('address');
+  var addressInput = document.querySelector('#address');
 
   /**
    * Set main pins coords as address input value
@@ -24,17 +25,15 @@ window.map = (function () {
   /**
    * Get three unique adverts
    * @param {Array} offersData
+   * @param {number} advertsNumber
    * @return {Array}
    */
-  var getThreeUniqueAdverts = function (offersData) {
-    var threeUniqueAdverts = [];
+  var getSomeUniqueAdverts = function (offersData, advertsNumber) {
     var offersDataCopy = offersData.slice();
 
-    for (var i = 0; i < 3; i++) {
-      threeUniqueAdverts.push(window.util.getUniqueArrayItem(offersDataCopy));
-    }
-
-    return threeUniqueAdverts;
+    return Array.apply(null, {length: advertsNumber}).map(function () {
+      return window.util.getUniqueArrayItem(offersDataCopy);
+    });
   };
 
   /**
@@ -43,7 +42,8 @@ window.map = (function () {
    */
   var renderServerData = function (offersData) {
     // render all pins on the map
-    window.pin.renderPins(getThreeUniqueAdverts(offersData), tokyoPinMap);
+    window.pin.renderPins(getSomeUniqueAdverts(offersData, ADVERTS_DEFAULT_NUMBER),
+        tokyoPinMap);
     var pins = tokyoMap.querySelectorAll('.pin');
     // Focus on the first not main pin
     pins[1].focus();
