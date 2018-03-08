@@ -1,7 +1,7 @@
 'use strict';
 
 window.backend = (function () {
-  var SERVER_URL = 'https://1510.dump.academy/keksobooking';
+  var SERVER_URL = 'https://js.dump.academy/keksobooking';
   var DATA_URL_ENDING = '/data';
   var REQUEST_TIMEOUT = 10000;
   var CLOSE_IMG = {
